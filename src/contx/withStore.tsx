@@ -1,12 +1,21 @@
-import React, { useMemo, useState, useEffect, createContext, createElement, memo, Context } from 'react';
+import React, {
+  useMemo,
+  useState,
+  useEffect,
+  createContext,
+  createElement,
+  memo,
+  Dispatch,
+  SetStateAction
+} from 'react';
 
 import { MutationsProvider, ActionsProvider, GettersProvider } from './storeContext';
-import { StoreType } from "./types";
+import { GettersType, StateType, StoreType } from "./types";
 
 const withStore = (Component: (props: any) => JSX.Element, store: StoreType) => (props: any) => {
-  const [state, setState] = useState(store.state);
+  const [state, setState] = useState<StateType>(store.state || {});
   const [initRender, setInitRender] = useState(false);
-  const [gettersValues, setGettersValues] = useState({});
+  const [gettersValues, setGettersValues] = useState<StateType>();
 
   const mutations = useMemo(() => {
     return getMutations(store, setState);
@@ -30,7 +39,7 @@ const withStore = (Component: (props: any) => JSX.Element, store: StoreType) => 
   const getters = useMemo(() => {
     if (!store.getters) return {};
 
-    const result: Record<string, Context<any>> = {}
+    const result: GettersType = {}
 
     Object.keys(store.getters).forEach(getterName => {
       const originalFn = store.getters?.[getterName];
@@ -44,7 +53,7 @@ const withStore = (Component: (props: any) => JSX.Element, store: StoreType) => 
   }, []);
 
   useEffect(() => {
-    setGetterValues(store, state, setGettersValues);
+    handleGettersValuesSet(store, state, setGettersValues);
     setInitRender(true);
   }, [state]);
 
@@ -52,7 +61,7 @@ const withStore = (Component: (props: any) => JSX.Element, store: StoreType) => 
 
   // wrapping in useMemo prevents re-creation upon state change
   const getterContexts = useMemo(() => {
-    return renderGetters(getters, gettersValues, <MemoizedComponent {...props} />);
+    return renderGetters(<MemoizedComponent {...props} />, getters, gettersValues);
   }, [getters, gettersValues, MemoizedComponent, props])
 
   return (
@@ -66,8 +75,10 @@ const withStore = (Component: (props: any) => JSX.Element, store: StoreType) => 
   );
 }
 
-const renderGetters = (gettersContext, gettersValues, component) => {
-  let result = createElement('div', { children: component });
+const renderGetters = (component: JSX.Element, gettersContext: GettersType, gettersValues?: StateType) => {
+  if (!gettersValues) return component;
+
+  let result: any = createElement('div', { children: component });
 
   Object.keys(gettersValues).forEach(getterName => {
     const getterContext = gettersContext[getterName];
@@ -78,11 +89,13 @@ const renderGetters = (gettersContext, gettersValues, component) => {
   return result;
 }
 
-const getMutations = (store, setState) => {
-  const values = {};
+const getMutations = (store: StoreType, setState: Dispatch<SetStateAction<StateType>>) => {
+  if (!store.mutations) return {};
+
+  const values: Record<string, (args: any) => void> = {};
 
   Object.keys(store.mutations).forEach(mutationName => {
-    const originalFn = store.mutations[mutationName];
+    const originalFn = store.mutations?.[mutationName];
     values[mutationName] = (...args) => {
       setState(prevState => {
         const newState = { ...prevState }
@@ -95,12 +108,16 @@ const getMutations = (store, setState) => {
   return values;
 }
 
-const setGetterValues = (store, state, setGettersValues) => {
+const handleGettersValuesSet = (store: StoreType, state: StateType, setGettersValues: Dispatch<SetStateAction<StateType>>) => {
+  if (!store.getters) return;
+
   Object.keys(store.getters).forEach(getterName => {
-    const originalFn = store.getters[getterName];
+    const originalFn = store.getters?.[getterName];
     const value = originalFn(state);
 
     setGettersValues(prevValues => {
+      if (!prevValues) prevValues = {}
+
       if (typeof prevValues[getterName] === 'undefined') {
         prevValues[getterName] = value;
       } else if (prevValues[getterName] !== value) {

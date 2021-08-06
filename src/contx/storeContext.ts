@@ -1,9 +1,9 @@
 import { createContext, useContext, memo, Context } from 'react';
 
-export const mutationsContext = createContext<Record<string, () => void>>({});
+export const mutationsContext = createContext<Record<string, (args?: any) => void>>({});
 export const MutationsProvider = memo(mutationsContext.Provider);
 
-export const actionsContext = createContext<Record<string, () => void>>({});
+export const actionsContext = createContext<Record<string, (args?: any) => void>>({});
 export const ActionsProvider = memo(actionsContext.Provider);
 
 // this context holds the other contexts for each getter
