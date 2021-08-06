@@ -1,11 +1,20 @@
 import { Context } from "react";
 
-export interface StoreType {
-  state?: Record<string, any>;
-  mutations?: Record<string, any>;
-  actions?: Record<string, any>;
-  getters?: Record<string, any>;
+export interface StoreType<T = unknown> {
+  state: T;
+  mutations?: Record<string, MutationType>;
+  actions?: Record<string, ActionType>;
+  getters?: Record<string, GetterType>;
 }
 
-export type StateType =  Record<string, any>;
-export type GettersType = Record<string, Context<any>>
+interface ActionParamsType {
+  mutations: Record<string, MutationType>;
+  actions: Record<string, ActionType>;
+}
+
+export type StateType = Record<string, any>;
+export type GettersContextType = Record<string, Context<any>>
+
+export type MutationType = (state: StateType, ...args: any) => void;
+export type ActionType = (context: ActionParamsType, ...args: any) => Promise<any>;
+export type GetterType = (state: StateType) => any

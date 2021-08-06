@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useGetter, useMutation } from '../contx/storeContext';
+import { useGetter, useMutation } from '../contx';
 
 const Counter = () => {
   const handleIncrement = useMutation('SET_COUNTER_INCREMENT');
