@@ -1,10 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 
-import withStore from "./contx/withStore";
-import store from "./store";
+import withStore from './contx/withStore';
+import store from './store';
 
 const AppWithStore = withStore(App, store);
 
