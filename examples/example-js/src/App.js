@@ -1,28 +1,9 @@
-import { HashRouter, Switch, Route, Redirect, Link } from 'react-router-dom';
-
-import DemoPage from './views/DemoPage';
-import PostsPage from './views/PostsPage';
+import Posts from './components/Posts';
 
 function App() {
   return (
     <div className="app">
-      <HashRouter>
-        <div className="nav">
-          <Link to="/demo">Demo</Link>
-          <Link to="/posts">Posts</Link>
-        </div>
-
-        <Switch>
-          <Route
-            path="/demo"
-            component={DemoPage}
-            exact />
-          <Route
-            path="/posts"
-            component={PostsPage} />
-          <Redirect from="/" to="/demo" exact />
-        </Switch>
-      </HashRouter>
+      <Posts />
     </div>
   );
 }

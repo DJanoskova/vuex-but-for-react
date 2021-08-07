@@ -10840,9 +10840,13 @@ vm-browserify@^1.0.1:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
-"vuex-but-for-react@link:../..":
-  version "0.0.0"
-  uid ""
+vuex-but-for-react@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/vuex-but-for-react/-/vuex-but-for-react-1.0.0.tgz#ad3671c67d5adf78a47fc427aa4eed1fdf694925"
+  integrity sha512-5BObxir9svgE3tUFiy+rUiH7arzVwaO2djS78IG3Jtj6CWN9lyv323jfN1wQnNY+zEpd6pnP1r+/LIo4r2W4bQ==
+  dependencies:
+    "@types/react" "^16.8.0"
+    typescript "^4.1.2"
 
 w3c-hr-time@^1.0.2:
   version "1.0.2"
