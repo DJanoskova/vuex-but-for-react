@@ -1,4 +1,4 @@
-# Vuex - But for React!
+# Vuex - But for React! ⚛
 
 If you know `vuex`, you know it's as close as we get to a perfect state management library. What if we could do this in the react world?
 
@@ -8,89 +8,7 @@ If you know `vuex`, you know it's as close as we get to a perfect state manageme
 
 `yarn add vuex-but-for-react`
 
-## Usage
-
-### useAction(`actionName`)
-
-An action is used for async data logic, especially API calls. You can dispatch mutations and other actions from within an action.
-
-The action returned by the `useAction()` hook is *never* re-created.
-
-```javascript
-import { useAction } from 'vuex-but-for-react';
-
-const PostsPage = () => {
-  const handleFetch = useAction('POSTS_FETCH');
-
-  useEffect(() => {
-    handleFetch();
-  }, [handleFetch])
-
-  return (
-    ...
-  )
-}
-```
-
-### useMutation(`actionName`)
-
-A mutation is used for sync data operations. It has access to the current state in order to alter it.
-
-The mutation returned by the `useMutation()` hook is *never* re-created.
-
-```javascript
-import { useMutation } from 'vuex-but-for-react';
-
-const Counter = () => {
-  const handleIncrement = useMutation('COUNTER_INCREMENT');
-  const handleDecrement = useMutation('COUNTER_DECREMENT');
-
-  return (
-    <>
-      <button onClick={handleDecrement}>-</button>
-      <button onClick={handleIncrement}>+</button>
-    </>
-  )
-}
-```
-
-### useGetter(`actionName`)
-A getter gives you the current stored value based on your config. It has access to the current state.
-
-The data returned by the `useGetter()` hook is updated *only in case the shallow value changes*.
-An update of one getter value won't trigger the update of another getter value.
-
-```javascript
-import { useGetter } from 'vuex-but-for-react';
-
-const PostsPage = () => {
-  const posts = useGetter('posts');
-
-  return (
-    <ul>
-      {posts.map(post => (
-        <li key={post.id}>{post.title}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-### withStore(`config`, `Component`)
-
-In order to initialize the global store, wrap your (chosen) root component in your store config.
-
-```javascript
-import { withStore } from 'vuex-but-for-react';
-
-const AppWithStore = withStore(App, store);
-```
-
-And more amazing stuff!
-
-#### useActionOnMount(`actionName`)
-
----
+TS support included ✨
 
 ## Working example
 
@@ -159,6 +77,105 @@ const Posts = () => {
 
 export default Posts
 ```
+
+Check the <a href="https://github.com/DJanoskova/vuex-but-for-react/tree/master/examples">examples</a> section to see JavaScript and TypeScript working apps!
+
+## API
+
+### useAction(`actionName`)
+
+An action is used for async data logic, especially API calls. You can dispatch mutations and other actions from within an action.
+
+The function returned by the `useAction()` hook is *never* re-created.
+
+```javascript
+import { useAction } from 'vuex-but-for-react';
+
+const PostsPage = () => {
+  const handleFetch = useAction('POSTS_FETCH');
+
+  useEffect(() => {
+    handleFetch();
+  }, [handleFetch])
+
+  return (
+    ...
+  )
+}
+```
+
+### useMutation(`actionName`)
+
+A mutation is used for sync data operations. It has access to the current state in order to alter it.
+
+The function returned by the `useMutation()` hook is *never* re-created.
+
+```javascript
+import { useMutation } from 'vuex-but-for-react';
+
+const Counter = () => {
+  const handleIncrement = useMutation('COUNTER_INCREMENT');
+  const handleDecrement = useMutation('COUNTER_DECREMENT');
+
+  return (
+    <>
+      <button onClick={handleDecrement}>-</button>
+      <button onClick={handleIncrement}>+</button>
+    </>
+  )
+}
+```
+
+### useGetter(`actionName`)
+A getter gives you the current stored value based on your config. It has access to the current state.
+
+The data returned by the `useGetter()` hook is updated *only in case the shallow value changes*.
+An update of one getter value won't trigger the update of another getter value.
+
+```javascript
+import { useGetter } from 'vuex-but-for-react';
+
+const PostsPage = () => {
+  const posts = useGetter('posts');
+
+  return (
+    <ul>
+      {posts.map(post => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+### withStore(`config`, `Component`)
+
+In order to initialize the global store, wrap your (chosen) root component in your store config.
+
+```javascript
+import { withStore } from 'vuex-but-for-react';
+
+const AppWithStore = withStore(App, store);
+```
+
+And more amazing stuff!
+
+#### useActionOnMount(`actionName`)
+
+```javascript
+import { useActionOnMount, useGetter } from 'vuex-but-for-react';
+
+const PostsPage = () => {
+  useActionOnMount('POSTS_FETCH');
+  const posts = useGetter('posts');
+
+  return (
+    ...
+  )
+}
+```
+
+---
 
 ### What's going on?
 

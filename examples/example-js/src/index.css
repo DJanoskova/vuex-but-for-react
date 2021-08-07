@@ -16,3 +16,7 @@ code {
   max-width: 800px;
   margin: 30px auto;
 }
+
+.nav a + a {
+  margin-left: 10px;
+}

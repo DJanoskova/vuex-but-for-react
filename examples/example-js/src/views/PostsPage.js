@@ -9,6 +9,9 @@ const PostsPage = () => {
     handleFetch();
   }, [handleFetch])
 
+  // You can use useActionOnMount() instead of useAction and useEffect!
+  // useActionOnMount('POSTS_FETCH');
+
   return (
     <ul>
       {posts.map(post => (

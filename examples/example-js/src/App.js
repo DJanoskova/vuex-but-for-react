@@ -1,4 +1,5 @@
-import { HashRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { HashRouter, Switch, Route, Redirect, Link } from 'react-router-dom';
+
 import DemoPage from './views/DemoPage';
 import PostsPage from './views/PostsPage';
 
@@ -6,6 +7,11 @@ function App() {
   return (
     <div className="app">
       <HashRouter>
+        <div className="nav">
+          <Link to="/demo">Demo</Link>
+          <Link to="/posts">Posts</Link>
+        </div>
+
         <Switch>
           <Route
             path="/demo"
