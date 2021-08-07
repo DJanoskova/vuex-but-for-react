@@ -6,7 +6,7 @@ import { PostType } from "../types/types";
 import Post from "../components/Post";
 
 const PostsPage = () => {
-  const handleFetch = useAction('FETCH_POSTS');
+  const handleFetch = useAction('POSTS_FETCH');
   const posts = useGetter<PostType[]>('posts');
 
   useEffect(() => {

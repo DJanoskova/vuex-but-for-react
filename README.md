@@ -1,46 +1,85 @@
-# Getting Started with Create React App
+# Vuex - But for React!
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+If you know `vuex`, you know it's as close as we get to a perfect state management library. What if we could do this in the react world?
 
-## Available Scripts
+`store.js`
+```javascript
+const store = {
+  state: {
+    posts: []
+  },
+  mutations: {
+    POSTS_SET(state, data) {
+      state.posts = data
+    }
+  },
+  actions: {
+    async POSTS_FETCH(context) {
+      const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+      const data = await response.json()
+      context.mutations.POSTS_SET(data)
+    }
+  },
+  getters: {
+    posts (state) {
+      return state.posts
+    }
+  }
+}
+```
 
-In the project directory, you can run:
+`index.js`
+```javascript
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { withStore } from 'vuex-but-for-react';
 
-### `yarn start`
+import App from './App';
+import store from './store';
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+const AppWithStore = withStore(App, store);
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+ReactDOM.render(
+  <AppWithStore />,
+  document.getElementById('root')
+);
+```
 
-### `yarn test`
+`Posts.js`
+```javascript
+import React, { useEffect } from 'react';
+import { useAction, useGetter } from 'vuex-but-for-react';
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+const Posts = () => {
+  const handleAction = useAction('POSTS_FETCH');
+  const posts = useGetter('posts');
 
-### `yarn build`
+  useEffect(() => {
+    handleAction();
+  }, [handleAction]) // don't worry, it doesn't re-create!
+  
+  return (
+    <ul>
+      {posts.map(post => <li key={post.id}>{post.title}</li>)}
+    </ul>
+  );
+}
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+export default Posts
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Installation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+`npm install vuex-but-for-react --save`
 
-### `yarn eject`
+`yarn add vuex-but-for-react`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## What's going on?
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+This library uses React's *Context* API under the hood. The `withStore()` higher order component is creating several contexts:
+* A context provider for **actions**, wrapped in a `memo()` to prevent re-creating
+* A context provider for **mutations**, wrapped in a `memo()` to prevent re-creating
+* A context provider for a collection of **getter contexts**, wrapped in a `memo()` to prevent re-creating
+* Dynamically created context (and provider) for *each one of your getters*. This allows us using `useGetter()` inside a component, which always attaches to its own context. It's an alternative solution to a single-state object context.
+Updating a getter's provider value will not affect other getters' provider value.
+* Under those contexts, there's the provided `App` component, wrapped in a `memo()` to prevent re-creating. Even if the parent context providers change value, **App won't re-render** and neither will its children, unless they're connected to *the* getter that was changed.  

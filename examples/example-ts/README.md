@@ -13,29 +13,29 @@ const store: StoreType<{ posts: PostType[] }> = {
     posts: []
   },
   mutations: {
-    SET_POSTS(state, data) {
+    POSTS_SET(state, data) {
       state.posts = data
     },
-    REMOVE_POST(state, id) {
+    POST_REMOVE(state, id) {
       state.posts = state.posts.filter((p: PostType) => p.id !== id)
     }
   },
   actions: {
-    async FETCH_POSTS(context) {
+    async POSTS_FETCH(context) {
       const response = await fetch('https://jsonplaceholder.typicode.com/posts')
       const data = await response.json()
-      context.mutations.SET_POSTS(data)
+      context.mutations.POSTS_SET(data)
     },
-    async FETCH_POST(_, id) {
+    async POST_FETCH(_, id) {
       const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`)
       const data = await response.json()
       return data
     },
-    async DELETE_POST(context, id) {
+    async POST_DELETE(context, id) {
       await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
         method: 'DELETE',
       })
-      context.mutations.REMOVE_POST(id)
+      context.mutations.POST_REMOVE(id)
     }
   },
   getters: {

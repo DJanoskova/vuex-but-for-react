@@ -6,7 +6,7 @@ interface IProps {
 }
 
 const PostDelete: FunctionComponent<IProps> = ({ id }) => {
-  const onDelete = useAction('DELETE_POST');
+  const onDelete = useAction('POST_DELETE');
 
   const handleDelete = (e: FormEvent) => {
     e.stopPropagation();

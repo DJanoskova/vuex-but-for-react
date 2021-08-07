@@ -1,31 +1,28 @@
 const store = {
   state: {
+    demoRefreshValue: 0,
+    counter: 0,
     posts: []
   },
   mutations: {
-    SET_POSTS(state, data) {
+    POSTS_SET(state, data) {
       state.posts = data
     },
-    REMOVE_POST(state, id) {
-      state.posts = state.posts.filter((p) => p.id !== id)
+    COUNTER_INCREMENT(state) {
+      state.counter++
+    },
+    COUNTER_DECREMENT(state) {
+      state.counter--
+    },
+    DEMO_VALUE_SET(state, value) {
+      state.demoRefreshValue = value
     }
   },
   actions: {
-    async FETCH_POSTS(context) {
+    async POSTS_FETCH(context) {
       const response = await fetch('https://jsonplaceholder.typicode.com/posts')
       const data = await response.json()
-      context.mutations.SET_POSTS(data)
-    },
-    async FETCH_POST(_, id) {
-      const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`)
-      const data = await response.json()
-      return data
-    },
-    async DELETE_POST(context, id) {
-      await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-        method: 'DELETE',
-      })
-      context.mutations.REMOVE_POST(id)
+      context.mutations.POSTS_SET(data)
     }
   },
   getters: {

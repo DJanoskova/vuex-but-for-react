@@ -8,7 +8,7 @@ interface IProps extends RouteComponentProps<{ id: string }>{}
 
 const PostPage: FunctionComponent<IProps> = ({ match }) => {
   const [postData, setPostData] = useState<PostType>(null);
-  const handleFetch = useAction<PostType>('FETCH_POST');
+  const handleFetch = useAction<PostType>('POST_FETCH');
 
   useEffect(() => {
     async function fetchFn() {
