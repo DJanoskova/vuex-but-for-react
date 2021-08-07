@@ -162,6 +162,8 @@ And more amazing stuff!
 
 #### useActionOnMount(`actionName`)
 
+Avoid calling useEffect manually. Just pass the action name and it will be executed on component mount automatically.
+
 ```javascript
 import { useActionOnMount, useGetter } from 'vuex-but-for-react';
 
