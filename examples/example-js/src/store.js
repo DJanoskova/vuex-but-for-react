@@ -1,8 +1,4 @@
-import { StoreType } from "vuex-but-for-react";
-
-import { PostType } from "./types/types";
-
-const store: StoreType<{ posts: PostType[] }> = {
+const store = {
   state: {
     posts: []
   },
@@ -11,7 +7,7 @@ const store: StoreType<{ posts: PostType[] }> = {
       state.posts = data
     },
     REMOVE_POST(state, id) {
-      state.posts = state.posts.filter((p: PostType) => p.id !== id)
+      state.posts = state.posts.filter((p) => p.id !== id)
     }
   },
   actions: {

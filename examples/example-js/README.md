@@ -1,6 +1,6 @@
-# Example - TS
+# Example - JS
 
-A TypeScript example using `vuex-but-for-react` with a blog-like global state logic
+A JavaScript example using `vuex-but-for-react` with a blog-like global state logic
 
 * Check the views/PostsPage for use of an **action** and a **getter**
 * Check the views/PostPage for use of an async **action** and storing the data locally.

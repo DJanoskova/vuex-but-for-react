@@ -2,11 +2,13 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { useAction } from "vuex-but-for-react";
 
+import { PostType } from "../types/types";
+
 interface IProps extends RouteComponentProps<{ id: string }>{}
 
 const PostPage: FunctionComponent<IProps> = ({ match }) => {
-  const [postData, setPostData] = useState(null);
-  const handleFetch = useAction('FETCH_POST');
+  const [postData, setPostData] = useState<PostType>(null);
+  const handleFetch = useAction<PostType>('FETCH_POST');
 
   useEffect(() => {
     async function fetchFn() {

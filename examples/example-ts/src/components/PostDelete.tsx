@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FormEvent, FunctionComponent } from 'react';
 import { useAction } from "vuex-but-for-react";
 
 interface IProps {
@@ -8,7 +8,7 @@ interface IProps {
 const PostDelete: FunctionComponent<IProps> = ({ id }) => {
   const onDelete = useAction('DELETE_POST');
 
-  const handleDelete = (e) => {
+  const handleDelete = (e: FormEvent) => {
     e.stopPropagation();
     onDelete(id);
   }

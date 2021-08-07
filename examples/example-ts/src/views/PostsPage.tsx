@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import { useAction, useGetter } from "vuex-but-for-react";
 
+import { PostType } from "../types/types";
+
 import Post from "../components/Post";
 
 const PostsPage = () => {
   const handleFetch = useAction('FETCH_POSTS');
-  const posts = useGetter('posts');
+  const posts = useGetter<PostType[]>('posts');
 
   useEffect(() => {
     handleFetch();

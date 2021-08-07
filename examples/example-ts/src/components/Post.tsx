@@ -1,9 +1,15 @@
-import React, { memo } from "react";
+import React, { FunctionComponent, memo } from "react";
 import { Link } from "react-router-dom";
+
+import { PostType } from "../types/types";
 
 import PostDelete from "./PostDelete";
 
-const Post = ({ post }) => {
+interface IProps {
+  post: PostType;
+}
+
+const Post: FunctionComponent<IProps> = ({ post }) => {
   return (
     <div key={post.id} className="post">
       <h3>{post.title}</h3>

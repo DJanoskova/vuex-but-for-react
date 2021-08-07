@@ -7,13 +7,13 @@ export const actionsContext = createContext<Record<string, (args?: any) => Promi
 export const ActionsProvider = memo(actionsContext.Provider);
 
 // this context holds the other contexts for each getter
-export const gettersContext = createContext<Record<string, Context<unknown>>>({});
+export const gettersContext = createContext<Record<string, Context<any>>>({});
 export const GettersProvider = memo(gettersContext.Provider);
 
-export const useAction = (actionName: string) => {
+export const useAction = <T, >(actionName: string) => {
   const actions = useContext(actionsContext);
 
-  return actions[actionName];
+  return actions[actionName] as (args?: any) => Promise<T>;
 }
 
 export const useMutation = (mutationName: string) => {
@@ -22,9 +22,9 @@ export const useMutation = (mutationName: string) => {
   return mutations[mutationName];
 }
 
-export const useGetter = (getterName: string) => {
+export const useGetter = <T, >(getterName: string) => {
   const getters = useContext(gettersContext);
-  const value = useContext(getters[getterName])
+  const value = useContext<T>(getters[getterName])
 
   return value;
 }
