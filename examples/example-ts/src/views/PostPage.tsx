@@ -4,7 +4,7 @@ import { useAction } from "vuex-but-for-react";
 
 interface IProps extends RouteComponentProps<{ id: string }>{}
 
-const Post: FunctionComponent<IProps> = ({ match }) => {
+const PostPage: FunctionComponent<IProps> = ({ match }) => {
   const [postData, setPostData] = useState(null);
   const handleFetch = useAction('FETCH_POST');
 
@@ -26,4 +26,4 @@ const Post: FunctionComponent<IProps> = ({ match }) => {
   )
 }
 
-export default Post;
+export default PostPage;

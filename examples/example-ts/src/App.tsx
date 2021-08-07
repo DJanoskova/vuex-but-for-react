@@ -1,8 +1,8 @@
 import React from 'react';
 import { HashRouter, Switch, Route } from 'react-router-dom';
 
-import Posts from "./views/Posts";
-import Post from "./views/Post";
+import PostsPage from "./views/PostsPage";
+import PostPage from "./views/PostPage";
 
 function App() {
   return (
@@ -11,11 +11,11 @@ function App() {
         <Switch>
           <Route
             path="/"
-            component={Posts}
+            component={PostsPage}
             exact />
           <Route
             path="/posts/:id"
-            component={Post} />
+            component={PostPage} />
         </Switch>
       </HashRouter>
     </div>
