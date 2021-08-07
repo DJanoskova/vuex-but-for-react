@@ -26,6 +26,12 @@ const store = {
     }
   },
   getters: {
+    demoRefreshValue(state) {
+      return state.demoRefreshValue
+    },
+    counter (state) {
+      return state.counter
+    },
     posts (state) {
       return state.posts
     }
