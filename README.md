@@ -148,7 +148,7 @@ const PostsPage = () => {
 }
 ```
 
-### withStore(`config`, `Component`)
+### withStore(`Component`, `config`)
 
 In order to initialize the global store, wrap your (chosen) root component in your store config.
 
