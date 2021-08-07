@@ -1,10 +1,16 @@
 {
   "name": "vuex-but-for-react",
-  "version": "0.1.4",
+  "version": "1.0.0",
   "private": false,
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
   "types": "./lib/esm/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DJanoskova/vuex-but-for-react"
+  },
+  "homepage": "https://github.com/DJanoskova/vuex-but-for-react#readme",
+  "keywords": ["react", "reducer", "state", "store", "functional", "flux"],
   "dependencies": {
     "@types/react": "^16.8.0",
     "typescript": "^4.1.2"
