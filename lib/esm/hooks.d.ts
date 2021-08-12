@@ -1,4 +1,6 @@
 export declare const useAction: <T>(actionName: string) => (args?: any) => Promise<T>;
+export declare const useActions: (values: string[]) => ((args?: any) => Promise<void>)[];
 export declare const useMutation: (mutationName: string) => (args?: any) => void;
+export declare const useMutations: (values: string[]) => ((args?: any) => void)[];
 export declare const useGetter: <T>(getterName: string) => T;
-export declare const useActionOnMount: <T>(actionName: string) => void;
+export declare const useActionOnMount: <T>(actionName: string, ...params: any[]) => void;

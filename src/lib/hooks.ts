@@ -12,6 +12,22 @@ export const useAction = <T, >(actionName: string) => {
   return actions[actionName] as (args?: any) => Promise<T>;
 }
 
+export const useActions = (values: string[]) => {
+  const actions = useContext(actionsContext);
+
+  const result: Array<(args?: any) => Promise<void>> = [];
+
+  values.forEach((actionName) => {
+    if (!actions[actionName]) {
+      throw new Error(`Cannot find action: ${actionName}`);
+    } else {
+      result.push(actions[actionName]);
+    }
+  });
+
+  return result;
+}
+
 export const useMutation = (mutationName: string) => {
   const mutations = useContext(mutationsContext);
 
@@ -22,7 +38,23 @@ export const useMutation = (mutationName: string) => {
   return mutations[mutationName];
 }
 
-export const useGetter = <T, >(getterName: string) => {
+export const useMutations = (values: string[]) => {
+  const mutations = useContext(mutationsContext);
+
+  const result: Array<(args?: any) => void> = [];
+
+  values.forEach((mutationName) => {
+    if (!mutations[mutationName]) {
+      throw new Error(`Cannot find mutation: ${mutationName}`);
+    } else {
+      result.push(mutations[mutationName]);
+    }
+  });
+
+  return result;
+}
+
+export const useGetter = <T, >(getterName: string): T => {
   const getters = useContext(gettersContext);
 
   if (!getters[getterName]) {
@@ -34,10 +66,10 @@ export const useGetter = <T, >(getterName: string) => {
   return value;
 }
 
-export const useActionOnMount = <T, >(actionName: string) => {
+export const useActionOnMount = <T, >(actionName: string, ...params) => {
   const action = useAction<T>(actionName);
 
   useEffect(() => {
-    action();
-  }, [action]);
+    action(...params);
+  }, [action, ...params]);
 }

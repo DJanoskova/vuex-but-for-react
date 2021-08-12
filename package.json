@@ -1,6 +1,6 @@
 {
   "name": "vuex-but-for-react",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "private": false,
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
@@ -25,7 +25,8 @@
     "start": "react-scripts start",
     "build": "rm -rf ./lib && yarn build:esm && yarn build:cjs",
     "build:esm": "tsc",
-    "build:cjs": "tsc --module commonjs --outDir lib/cjs"
+    "build:cjs": "tsc --module commonjs --outDir lib/cjs",
+    "publish": "git push && yarn build && npm publish"
   },
   "eslintConfig": {
     "extends": [
