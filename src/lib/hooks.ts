@@ -15,7 +15,7 @@ export const useAction = <T, >(actionName: string) => {
 export const useActions = (values: string[]) => {
   const actions = useContext(actionsContext);
 
-  const result: Array<(args?: any) => Promise<void>> = [];
+  const result: Array<(args?: any) => Promise<any>> = [];
 
   values.forEach((actionName) => {
     if (!actions[actionName]) {
