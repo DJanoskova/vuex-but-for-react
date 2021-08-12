@@ -26,7 +26,7 @@
     "build": "rm -rf ./lib && yarn build:esm && yarn build:cjs",
     "build:esm": "tsc",
     "build:cjs": "tsc --module commonjs --outDir lib/cjs",
-    "publish": "git push && yarn build && npm publish"
+    "publish": "yarn build && git add . && git commit -m 'build' && git push && npm publish"
   },
   "eslintConfig": {
     "extends": [
