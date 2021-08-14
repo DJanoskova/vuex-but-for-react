@@ -9,7 +9,7 @@
     "type": "git",
     "url": "https://github.com/DJanoskova/vuex-but-for-react"
   },
-  "homepage": "https://github.com/DJanoskova/vuex-but-for-react#readme",
+  "homepage": "https://vuex-but-for-react.netlify.app/",
   "keywords": ["react", "reducer", "state", "store", "functional", "flux"],
   "dependencies": {
     "@types/react": "^16.8.0",
