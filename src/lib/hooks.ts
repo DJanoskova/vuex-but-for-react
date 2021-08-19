@@ -66,6 +66,22 @@ export const useGetter = <T, >(getterName: string): T => {
   return value;
 }
 
+export const useGetters = <T extends Array<any>, >(values: string[]): T => {
+  const getters = useContext(gettersContext);
+  const result: any[] = [];
+
+  values.forEach(getterName => {
+    if (!getters[getterName]) {
+      throw new Error(`Cannot find getter: ${getterName}`);
+    } else {
+      const value = useContext(getters[getterName]);
+      result.push(value)
+    }
+  })
+
+  return result as T;
+}
+
 export const useActionOnMount = <T, >(actionName: string, ...params) => {
   const action = useAction<T>(actionName);
 
