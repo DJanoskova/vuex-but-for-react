@@ -22,12 +22,14 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   }, []);
 
   const actions = useMemo(() => {
-    if (!store.actions) return {};
+    const actionsFns = getStoreKeyModuleValues(store, 'actions');
+    const actionNames = Object.keys(actionsFns);
+    if (!actionNames.length) return {};
 
     const values: Record<string, (args: any) => any> = {};
 
-    Object.keys(store.actions).forEach(actionName => {
-      const originalFn = store.actions?.[actionName] as ActionType;
+    actionNames.forEach(actionName => {
+      const originalFn = actionsFns[actionName] as ActionType;
       values[actionName] = (...args: any[]) => originalFn({ mutations, actions }, ...args);
     })
 
@@ -35,12 +37,14 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   }, [mutations]);
 
   const getters = useMemo(() => {
-    if (!store.getters) return {};
+    const gettersFns = getStoreKeyModuleValues(store, 'getters');
+    const getterNames = Object.keys(gettersFns);
+    if (!getterNames.length) return {};
 
     const result: GettersContextType = {}
 
-    Object.keys(store.getters).forEach(getterName => {
-      const originalFn = store.getters?.[getterName] as GetterType;
+    Object.keys(getterNames).forEach(getterName => {
+      const originalFn = gettersFns[getterName] as GetterType;
       const value = originalFn(store.state as StateType);
       const context = createContext(value);
 
@@ -88,12 +92,14 @@ const renderGetters = (component: JSX.Element, gettersContext: GettersContextTyp
 }
 
 const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T>>) => {
-  if (!store.mutations) return {};
+  const mutations = getStoreKeyModuleValues(store, 'mutations');
+  const mutationNames = Object.keys(mutations);
+  if (!mutationNames.length) return {};
 
   const values: Record<string, (args: any) => void> = {};
 
-  Object.keys(store.mutations).forEach(mutationName => {
-    const originalFn = store.mutations?.[mutationName] as MutationType;
+  mutationNames.forEach(mutationName => {
+    const originalFn = mutations[mutationName] as MutationType;
     values[mutationName] = (...args) => {
       setState(prevState => {
         const newState: T = { ...prevState }
@@ -128,6 +134,40 @@ const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValue
       return prevValues;
     })
   });
+}
+
+/**
+ * Returns an object with keys and fn values
+ * for mutations, actions and getters
+ * Accounts for infinite levels of children modules
+ * @param store
+ * @param storeType
+ * @param result
+ * @param prefix
+ */
+const getStoreKeyModuleValues = (store: StoreType, storeType: 'mutations' | 'actions' | 'getters', result: Record<string, Function> = {}, prefix = '') => {
+  // get the current key names with added prefix
+  if (store[storeType]) {
+    let keyNames = Object.keys(store[storeType] ?? {});
+
+    keyNames.forEach(keyName => {
+      const keyNameWithPrefix = prefix ? `${prefix}/${keyName}` : keyName;
+      Object.assign(result, { [keyNameWithPrefix]: store[storeType]?.[keyName] })
+    })
+  }
+
+  // check for child modules
+  const childModules = Object.keys(store.modules ?? {});
+  if (childModules.length) {
+    childModules.forEach(moduleName => {
+      const childPrefix = prefix ? `${prefix}/${moduleName}` : moduleName;
+      getStoreKeyModuleValues(childModules[moduleName], storeType, result, childPrefix);
+      // const childModuleValues = getStoreKeyModuleValues(childModules[moduleName], storeType, result, childPrefix);
+      // Object.assign(result, childModuleValues);
+    })
+  }
+
+  return result;
 }
 
 export default withStore;
