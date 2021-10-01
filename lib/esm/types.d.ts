@@ -4,6 +4,7 @@ export interface StoreType<T = unknown> {
     mutations?: Record<string, MutationType>;
     actions?: Record<string, ActionType>;
     getters?: Record<string, GetterType>;
+    modules?: Record<string, StoreType>;
 }
 interface ActionParamsType {
     mutations: Record<string, MutationType>;

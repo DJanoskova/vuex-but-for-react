@@ -13,7 +13,7 @@ import { MutationsProvider, ActionsProvider, GettersProvider } from './storeCont
 import { ActionType, GettersContextType, GetterType, MutationType, StateType, StoreType } from "./types";
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>) => (props: any) => {
-  const [state, setState] = useState<InheritedStateType>(store.state);
+  const [state, setState] = useState<InheritedStateType>(getStoreStateWithModules<InheritedStateType>(store));
   const [initRender, setInitRender] = useState(false);
   const [gettersValues, setGettersValues] = useState<StateType>();
 
@@ -24,6 +24,7 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   const actions = useMemo(() => {
     const actionsFns = getStoreKeyModuleValues(store, 'actions');
     const actionNames = Object.keys(actionsFns);
+    console.log(actionNames)
     if (!actionNames.length) return {};
 
     const values: Record<string, (args: any) => any> = {};
@@ -43,7 +44,8 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
 
     const result: GettersContextType = {}
 
-    Object.keys(getterNames).forEach(getterName => {
+    getterNames.forEach(getterName => {
+      console.log(gettersFns)
       const originalFn = gettersFns[getterName] as GetterType;
       const value = originalFn(store.state as StateType);
       const context = createContext(value);
@@ -162,12 +164,24 @@ const getStoreKeyModuleValues = (store: StoreType, storeType: 'mutations' | 'act
     childModules.forEach(moduleName => {
       const childPrefix = prefix ? `${prefix}/${moduleName}` : moduleName;
       getStoreKeyModuleValues(childModules[moduleName], storeType, result, childPrefix);
-      // const childModuleValues = getStoreKeyModuleValues(childModules[moduleName], storeType, result, childPrefix);
-      // Object.assign(result, childModuleValues);
     })
   }
 
   return result;
+}
+
+const getStoreStateWithModules = <InheritedStateType, >(store: StoreType, result: Record<string, any> = {}, prefix: string = ''): InheritedStateType => {
+  Object.assign(result, store.state);
+
+  const childModules = Object.keys(store.modules ?? {});
+  if (childModules.length) {
+    childModules.forEach(moduleName => {
+      const childPrefix = prefix ? `${prefix}/${moduleName}` : moduleName;
+      getStoreStateWithModules(childModules[moduleName], result, childPrefix);
+    })
+  }
+
+  return result as InheritedStateType;
 }
 
 export default withStore;

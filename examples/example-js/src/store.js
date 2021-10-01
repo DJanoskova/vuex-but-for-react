@@ -35,6 +35,25 @@ const store = {
     posts (state) {
       return state.posts
     }
+  },
+  modules: {
+    projects: {
+      state: {
+        data: []
+      },
+      mutations: {
+        PROJECTS_SET(state, data) {
+          state.projects.data = data
+        }
+      },
+      actions: {
+        async PROJECTS_FETCH(context) {
+          const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+          const data = await response.json()
+          context.mutations.PROJECTS_SET(data)
+        }
+      }
+    }
   }
 }
 
