@@ -9,7 +9,7 @@ import {StoreType} from "./types";
  * @param result
  * @param prefix
  */
-export const getStoreKeyModuleValues = (store: StoreType, storeType: 'mutations' | 'actions' | 'getters', result: Record<string, Function> = {}, prefix = '') => {
+export const getStoreKeyModuleValues = <T, >(store: StoreType, storeType: 'mutations' | 'actions' | 'getters', result: Record<string, T> = {}, prefix = '') => {
   // get the current key names with added prefix
   if (store[storeType]) {
     let keyNames = Object.keys(store[storeType] ?? {});

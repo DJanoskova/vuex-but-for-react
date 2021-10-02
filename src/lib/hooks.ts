@@ -1,6 +1,7 @@
 import { useContext, useEffect } from "react";
 
 import { actionsContext, gettersContext, mutationsContext } from "./storeContext";
+import { filterObjectModuleKeys } from "./helpers";
 
 export const useAction = <T, >(actionName: string) => {
   const actions = useContext(actionsContext);
@@ -11,8 +12,16 @@ export const useAction = <T, >(actionName: string) => {
     throw new Error(`Cannot find action: ${actionName}`)
   }
 
-  // TODO filter object keys for modules
-  const actionWithStoreParams = (...args) => action({ actions, mutations }, ...args);
+  const moduleNames = actionName.split('/');
+  let filteredActions = actions;
+  let filteredMutations = mutations;
+
+  if (moduleNames.length > 1) {
+    filteredActions = filterObjectModuleKeys(actions, actionName);
+    filteredMutations = filterObjectModuleKeys(mutations, actionName);
+  }
+
+  const actionWithStoreParams = (...args: any[]) => action({ actions: filteredActions, mutations: filteredMutations }, ...args);
 
   return actionWithStoreParams as (args?: any) => Promise<T>;
 }

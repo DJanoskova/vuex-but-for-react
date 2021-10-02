@@ -1,3 +1,29 @@
+const projectsModule =  {
+  state: {
+    data: [{ id: 1, title: 'test' }]
+  },
+  mutations: {
+    PROJECTS_SET(state, data) {
+      console.log(state)
+      state.data = data
+    }
+  },
+  actions: {
+    async PROJECTS_FETCH(context) {
+      console.log(context)
+      const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+      const data = await response.json()
+      context.mutations.PROJECTS_SET(data)
+    }
+  },
+  getters: {
+    projects (state) {
+      console.log('what state', state)
+      return state.data
+    }
+  }
+}
+
 const store = {
   state: {
     demoRefreshValue: 0,
@@ -20,6 +46,7 @@ const store = {
   },
   actions: {
     async POSTS_FETCH(context) {
+      console.log(context)
       const response = await fetch('https://jsonplaceholder.typicode.com/posts')
       const data = await response.json()
       context.mutations.POSTS_SET(data)
@@ -37,30 +64,7 @@ const store = {
     }
   },
   modules: {
-    projects: {
-      state: {
-        data: []
-      },
-      mutations: {
-        PROJECTS_SET(state, data) {
-          console.log(state)
-          state.data = data
-        }
-      },
-      actions: {
-        async PROJECTS_FETCH(context) {
-          const response = await fetch('https://jsonplaceholder.typicode.com/posts')
-          const data = await response.json()
-          context.mutations.PROJECTS_SET(data)
-        }
-      },
-      getters: {
-        projects (state) {
-          console.log('what state', state)
-          return state.data
-        }
-      }
-    }
+    projects: projectsModule
   }
 }
 

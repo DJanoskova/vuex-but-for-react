@@ -8,7 +8,7 @@ export interface StoreType<T = unknown> {
   modules?: Record<string, StoreType>;
 }
 
-interface ActionParamsType {
+export interface ActionParamsType {
   mutations: Record<string, MutationType>;
   actions: Record<string, ActionType>;
 }

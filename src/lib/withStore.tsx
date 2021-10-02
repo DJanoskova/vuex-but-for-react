@@ -23,34 +23,12 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   }, []);
 
   const actions = useMemo(() => {
-    const actionsFns = getStoreKeyModuleValues(store, 'actions');
-    const actionNames = Object.keys(actionsFns);
-    if (!actionNames.length) return {};
-
-    const values: Record<string, (args: any) => any> = {};
-
-    actionNames.forEach(actionName => {
-      const originalFn = actionsFns[actionName] as ActionType;
-      const moduleNames = actionName.split('/');
-
-      if (moduleNames.length === 1) {
-        values[actionName] = originalFn;
-      } else {
-        // const moduleMutations = filterObjectModuleKeys(mutations, actionName);
-        // const moduleActions = filterObjectModuleKeys(actions, actionName);
-        // console.log(mutations)
-        // console.log(actions)
-        // console.log(moduleMutations)
-        // console.log(moduleActions)
-        values[actionName] = originalFn;
-      }
-    })
-
-    return values;
-  }, [mutations]);
+    const actionsFns = getStoreKeyModuleValues<ActionType>(store, 'actions');
+    return actionsFns ?? {};
+  }, []);
 
   const getters = useMemo(() => {
-    const gettersFns = getStoreKeyModuleValues(store, 'getters');
+    const gettersFns = getStoreKeyModuleValues<Function>(store, 'getters');
     const getterNames = Object.keys(gettersFns);
     if (!getterNames.length) return {};
 
