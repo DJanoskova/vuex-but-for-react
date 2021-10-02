@@ -17,3 +17,5 @@ export declare const getStoreModuleName: (path: string) => string;
 export declare const filterObjectModuleKeys: (data: Record<string, any>, keyName: any) => {
     [x: string]: any;
 };
+export declare function getStoreModule(obj: Record<string, any>, propString: string): Record<string, any>;
+export declare function setStoreModule(originalData: Record<string, any>, moduleData: Record<string, any>, path: string): any;

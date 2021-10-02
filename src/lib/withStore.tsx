@@ -11,12 +11,14 @@ import React, {
 
 import { MutationsProvider, ActionsProvider, GettersProvider } from './storeContext';
 import { ActionType, GettersContextType, GetterType, MutationType, StateType, StoreType } from "./types";
-import { getStoreKeyModuleValues, getStoreModuleName, getStoreModule} from "./helpers";
+import { getStoreKeyModuleValues, getStoreModuleName, getStoreModule } from "./helpers";
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>) => (props: any) => {
   const [state, setState] = useState<InheritedStateType>(getStoreStateWithModules<InheritedStateType>(store));
   const [initRender, setInitRender] = useState(false);
   const [gettersValues, setGettersValues] = useState<StateType>();
+
+  console.log('current state', state)
 
   const mutations = useMemo(() => {
     return getMutations<InheritedStateType>(store, setState);
@@ -112,10 +114,8 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
         if (moduleNames.length === 1) {
           originalFn(newState, ...args)
         } else {
-          // console.log(newState, mutationName)
           const moduleName = getStoreModuleName(mutationName);
           const moduleState = getStoreModule(newState, moduleName);
-          console.log('EEEEK', moduleState)
           originalFn(moduleState, ...args)
         }
 

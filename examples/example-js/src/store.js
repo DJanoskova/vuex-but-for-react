@@ -4,6 +4,7 @@ const projectsModule =  {
   },
   mutations: {
     PROJECTS_SET(state, data) {
+      console.log('set called')
       console.log(state)
       state.data = data
     }
@@ -13,7 +14,9 @@ const projectsModule =  {
       // const response = await fetch('https://jsonplaceholder.typicode.com/posts')
       // const data = await response.json()
       const data = [{ id: 2, title: 'help' }]
-      context.mutations.PROJECTS_SET(data)
+      setTimeout(() => {
+        context.mutations.PROJECTS_SET(data)
+      }, 5000)
     }
   },
   getters: {
