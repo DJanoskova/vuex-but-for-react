@@ -11,7 +11,7 @@ import React, {
 
 import { MutationsProvider, ActionsProvider, GettersProvider } from './storeContext';
 import { ActionType, GettersContextType, GetterType, MutationType, StateType, StoreType } from "./types";
-import { getStoreKeyModuleValues } from "./helpers";
+import { getStoreKeyModuleValues, getStoreModuleName, getStoreModule} from "./helpers";
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>) => (props: any) => {
   const [state, setState] = useState<InheritedStateType>(getStoreStateWithModules<InheritedStateType>(store));
@@ -43,7 +43,7 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
       if (moduleNames.length === 1) {
         value = originalFn(store.state as StateType);
       } else {
-        const moduleStore = getPropByString(store, getterName, true) as StateType;
+        const moduleStore = getStoreModule(store, getterName) as StateType;
         value = originalFn(moduleStore.state);
       }
 
@@ -112,7 +112,9 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
         if (moduleNames.length === 1) {
           originalFn(newState, ...args)
         } else {
-          const moduleState = getPropByString(newState, mutationName);
+          // console.log(newState, mutationName)
+          const moduleName = getStoreModuleName(mutationName);
+          const moduleState = getStoreModule(newState, moduleName);
           console.log('EEEEK', moduleState)
           originalFn(moduleState, ...args)
         }
@@ -162,29 +164,6 @@ const getStoreStateWithModules = <InheritedStateType, >(store: StoreType, result
   }
 
   return result as InheritedStateType;
-}
-
-function getPropByString(obj: Record<string, any>, propString: string, searchModules = false) {
-  if (!propString)
-    return obj;
-
-  const props = propString.split('/');
-  let prop: string
-  let foundPropI
-
-  for (let i = 0, iLen = props.length - 1; i < iLen; i++) {
-    prop = props[i];
-
-    const candidate = searchModules ? obj.modules?.[prop] : obj[prop];
-    if (candidate !== undefined) {
-      obj = candidate;
-      foundPropI = i
-    } else {
-      break;
-    }
-  }
-
-  return searchModules ? obj : obj[props[foundPropI]];
 }
 
 export default withStore;

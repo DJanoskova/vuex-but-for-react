@@ -8,7 +8,12 @@ import { StoreType } from "./types";
  * @param result
  * @param prefix
  */
-export declare const getStoreKeyModuleValues: (store: StoreType, storeType: 'mutations' | 'actions' | 'getters', result?: Record<string, Function>, prefix?: string) => Record<string, Function>;
+export declare const getStoreKeyModuleValues: <T>(store: StoreType, storeType: 'mutations' | 'actions' | 'getters', result?: Record<string, T>, prefix?: string) => Record<string, T>;
+/**
+ * from projects/chemistry/POSTS_FETCH -> to projects/chemistry
+ * @param path
+ */
+export declare const getStoreModuleName: (path: string) => string;
 export declare const filterObjectModuleKeys: (data: Record<string, any>, keyName: any) => {
     [x: string]: any;
 };

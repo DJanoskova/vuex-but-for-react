@@ -32,13 +32,20 @@ export const getStoreKeyModuleValues = <T, >(store: StoreType, storeType: 'mutat
   return result;
 }
 
-export const filterObjectModuleKeys = (data: Record<string, any>, keyName) => {
-  const moduleNames = keyName.split('/')
+/**
+ * from projects/chemistry/POSTS_FETCH -> to projects/chemistry
+ * @param path
+ */
+export const getStoreModuleName = (path: string) => {
+  const moduleNames = path.split('/')
   // remove the last action/mutation name, keep module levels only
   moduleNames.splice(moduleNames.length - 1, 1)
 
-  // from projects/chemistry/POSTS_FETCH -> to projects/chemistry
-  const modulePath = moduleNames.join('/') + '/'
+  return moduleNames.join('/') + '/'
+}
+
+export const filterObjectModuleKeys = (data: Record<string, any>, keyName) => {
+  const modulePath = getStoreModuleName(keyName)
 
   const clonedData = { ...data }
 
@@ -52,4 +59,25 @@ export const filterObjectModuleKeys = (data: Record<string, any>, keyName) => {
   })
 
   return clonedData;
+}
+
+export function getStoreModule(obj: Record<string, any>, propString: string) {
+  if (!propString)
+    return obj;
+
+  const props = propString.split('/');
+  let prop: string
+
+  for (let i = 0, iLen = props.length - 1; i < iLen; i++) {
+    prop = props[i];
+
+    const candidate = obj.modules?.[prop];
+    if (candidate !== undefined) {
+      obj = candidate;
+    } else {
+      break;
+    }
+  }
+
+  return obj;
 }
