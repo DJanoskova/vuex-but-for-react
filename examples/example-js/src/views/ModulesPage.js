@@ -1,18 +1,13 @@
-import { useEffect } from 'react';
-import { useAction, useGetter } from 'vuex-but-for-react';
+import {useAction, useActionOnMount, useGetter} from 'vuex-but-for-react';
 
 const ModulesPage = () => {
-  const handleFetch = useAction('POSTS_FETCH');
-  const posts = useGetter('posts');
-
-  useEffect(() => {
-    handleFetch();
-  }, [handleFetch])
+  useActionOnMount('projects/PROJECTS_FETCH');
+  const projects = useGetter('projects/projects');
 
   return (
     <ul>
-      {posts.map(post => (
-        <li key={post.id}>{post.title}</li>
+      {projects.map(project => (
+        <li key={project.id}>{project.title}</li>
       ))}
     </ul>
   )

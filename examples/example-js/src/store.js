@@ -43,7 +43,8 @@ const store = {
       },
       mutations: {
         PROJECTS_SET(state, data) {
-          state.projects.data = data
+          console.log(state)
+          state.data = data
         }
       },
       actions: {
@@ -51,6 +52,12 @@ const store = {
           const response = await fetch('https://jsonplaceholder.typicode.com/posts')
           const data = await response.json()
           context.mutations.PROJECTS_SET(data)
+        }
+      },
+      getters: {
+        projects (state) {
+          console.log('what state', state)
+          return state.data
         }
       }
     }

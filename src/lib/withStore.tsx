@@ -24,7 +24,6 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   const actions = useMemo(() => {
     const actionsFns = getStoreKeyModuleValues(store, 'actions');
     const actionNames = Object.keys(actionsFns);
-    console.log(actionNames)
     if (!actionNames.length) return {};
 
     const values: Record<string, (args: any) => any> = {};
@@ -45,7 +44,6 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
     const result: GettersContextType = {}
 
     getterNames.forEach(getterName => {
-      console.log(gettersFns)
       const originalFn = gettersFns[getterName] as GetterType;
       const value = originalFn(store.state as StateType);
       const context = createContext(value);
@@ -105,8 +103,17 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
     values[mutationName] = (...args) => {
       setState(prevState => {
         const newState: T = { ...prevState }
+
+        const moduleNames = mutationName.split('/');
+
         // alter the state with the logic given in the store config
-        originalFn(newState, ...args)
+        if (moduleNames.length === 1) {
+          originalFn(newState, ...args)
+        } else {
+          console.log('EEEEK', getPropByString(newState, mutationName))
+          originalFn(getPropByString(newState, mutationName), ...args)
+        }
+
         return newState
       })
     }
@@ -163,25 +170,50 @@ const getStoreKeyModuleValues = (store: StoreType, storeType: 'mutations' | 'act
   if (childModules.length) {
     childModules.forEach(moduleName => {
       const childPrefix = prefix ? `${prefix}/${moduleName}` : moduleName;
-      getStoreKeyModuleValues(childModules[moduleName], storeType, result, childPrefix);
+      if (store.modules) getStoreKeyModuleValues(store.modules[moduleName], storeType, result, childPrefix);
     })
   }
 
   return result;
 }
 
-const getStoreStateWithModules = <InheritedStateType, >(store: StoreType, result: Record<string, any> = {}, prefix: string = ''): InheritedStateType => {
-  Object.assign(result, store.state);
+const getStoreStateWithModules = <InheritedStateType, >(store: StoreType, result: Record<string, any> = {}): InheritedStateType => {
+  Object.assign(result, store?.state);
 
   const childModules = Object.keys(store.modules ?? {});
   if (childModules.length) {
+    Object.assign(result, { modules: {} });
+
     childModules.forEach(moduleName => {
-      const childPrefix = prefix ? `${prefix}/${moduleName}` : moduleName;
-      getStoreStateWithModules(childModules[moduleName], result, childPrefix);
+      Object.assign(result.modules, { [moduleName]: {} });
+      if (store.modules) getStoreStateWithModules(store.modules[moduleName], result.modules[moduleName]);
     })
   }
 
   return result as InheritedStateType;
+}
+
+function getPropByString(obj: Record<string, any>, propString: string) {
+  if (!propString)
+    return obj;
+
+  const props = propString.split('/');
+  let prop: string
+  let parentI
+
+  for (let i = 0, iLen = props.length - 1; i < iLen; i++) {
+    prop = props[i];
+
+    const candidate = obj[prop];
+    if (candidate !== undefined) {
+      obj = candidate;
+    } else {
+      break;
+    }
+    parentI = i
+  }
+
+  return obj[props[parentI]];
 }
 
 export default withStore;
