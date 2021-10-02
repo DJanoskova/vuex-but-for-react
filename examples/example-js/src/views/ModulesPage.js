@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import { useAction, useGetter } from 'vuex-but-for-react';
 
 const ModulesPage = () => {

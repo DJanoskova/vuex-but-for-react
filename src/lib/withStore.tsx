@@ -10,8 +10,8 @@ import React, {
 } from 'react';
 
 import { MutationsProvider, ActionsProvider, GettersProvider } from './storeContext';
-import { ActionType, GettersContextType, GetterType, MutationType, StateType, StoreType } from "./types";
-import { getStoreKeyModuleValues, getStoreModuleName, getStoreModule } from "./helpers";
+import { ActionType, GettersContextType, GetterType, MutationType, StateType, StoreType } from './types';
+import { getStoreKeyModuleValues, getStoreModuleName, getStoreModule, getStoreStateWithModules } from './helpers';
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>) => (props: any) => {
   const [state, setState] = useState<InheritedStateType>(getStoreStateWithModules<InheritedStateType>(store));
@@ -160,22 +160,6 @@ const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValue
       return prevValues;
     })
   });
-}
-
-const getStoreStateWithModules = <InheritedStateType, >(store: StoreType, result: Record<string, any> = {}): InheritedStateType => {
-  Object.assign(result, store?.state);
-
-  const childModules = Object.keys(store.modules ?? {});
-  if (childModules.length) {
-    Object.assign(result, { modules: {} });
-
-    childModules.forEach(moduleName => {
-      Object.assign(result.modules, { [moduleName]: {} });
-      if (store.modules) getStoreStateWithModules(store.modules[moduleName], result.modules[moduleName]);
-    })
-  }
-
-  return result as InheritedStateType;
 }
 
 export default withStore;
