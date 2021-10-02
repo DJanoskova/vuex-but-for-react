@@ -1,11 +1,9 @@
 const projectsModule =  {
   state: {
-    data: [{ id: 1, title: 'test' }]
+    data: [{ id: 1, title: 'Dummy project' }]
   },
   mutations: {
     PROJECTS_SET(state, data) {
-      console.log('set called')
-      console.log(state)
       state.data = data
     }
   },
