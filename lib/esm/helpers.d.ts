@@ -18,3 +18,4 @@ export declare const filterObjectModuleKeys: (data: Record<string, any>, keyName
     [x: string]: any;
 };
 export declare function getStoreModule(obj: Record<string, any>, propString: string): Record<string, any>;
+export declare const getStoreStateWithModules: <InheritedStateType>(store: StoreType, result?: Record<string, any>) => InheritedStateType;

@@ -1,4 +1,4 @@
-import {useCallback, useContext, useEffect} from "react";
+import { useCallback, useContext, useEffect } from "react";
 
 import { actionsContext, gettersContext, mutationsContext } from "./storeContext";
 import { filterObjectModuleKeys } from "./helpers";

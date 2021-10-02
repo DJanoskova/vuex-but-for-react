@@ -1,13 +1,8 @@
-import { useEffect } from 'react';
-import { useAction, useGetter } from 'vuex-but-for-react';
+import { useActionOnMount, useGetter } from 'vuex-but-for-react';
 
 const ModulesPage = () => {
-  const handleFetch = useAction('projects/PROJECTS_FETCH');
   const projects = useGetter('projects/projects');
-
-  useEffect(() => {
-    handleFetch()
-  }, [handleFetch])
+  useActionOnMount('projects/PROJECTS_FETCH');
 
   return (
     <ul>

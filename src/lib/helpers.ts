@@ -1,4 +1,4 @@
-import {StoreType} from "./types";
+import { StoreType } from "./types";
 
 /**
  * Returns an object with keys and fn values
