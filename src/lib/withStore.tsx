@@ -18,8 +18,6 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   const [initRender, setInitRender] = useState(false);
   const [gettersValues, setGettersValues] = useState<StateType>();
 
-  console.log('current state', state)
-
   const mutations = useMemo(() => {
     return getMutations<InheritedStateType>(store, setState);
   }, []);
