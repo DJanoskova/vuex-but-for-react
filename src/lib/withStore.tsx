@@ -107,7 +107,6 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
     values[mutationName] = (...args) => {
       setState(prevState => {
         const newState: T = { ...prevState }
-
         const moduleNames = mutationName.split('/');
 
         // alter the state with the logic given in the store config
@@ -128,21 +127,36 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
 }
 
 const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValues: Dispatch<SetStateAction<StateType>>) => {
-  if (!store.getters) return;
+  const getters = getStoreKeyModuleValues(store, 'getters');
+  const getterNames = Object.keys(getters);
+  if (!getterNames.length) return;
 
-  Object.keys(store.getters).forEach(getterName => {
-    const originalFn = store.getters?.[getterName] as GetterType;
-    const value = originalFn(state);
+  getterNames.forEach(getterPath => {
+    const moduleNames = getterPath.split('/');
+    let originalFn;
+    let value;
+
+    // alter the state with the logic given in the store config
+    if (moduleNames.length === 1) {
+      originalFn = store.getters?.[getterPath] as GetterType;
+      value = originalFn(state as StateType);
+    } else {
+      const moduleStore = getStoreModule(store, getterPath) as StateType;
+      const moduleState = getStoreModule(state, getterPath) as StateType;
+      const getterName = moduleNames[moduleNames.length - 1]
+      originalFn = moduleStore.getters?.[getterName] as GetterType;
+      value = originalFn(moduleState);
+    }
 
     setGettersValues(prevValues => {
       if (!prevValues) prevValues = {}
 
-      if (typeof prevValues[getterName] === 'undefined') {
-        prevValues[getterName] = value;
-      } else if (prevValues[getterName] !== value) {
+      if (typeof prevValues[getterPath] === 'undefined') {
+        prevValues[getterPath] = value;
+      } else if (prevValues[getterPath] !== value) {
         return {
           ...prevValues,
-          [getterName]: value
+          [getterPath]: value
         };
       }
       return prevValues;

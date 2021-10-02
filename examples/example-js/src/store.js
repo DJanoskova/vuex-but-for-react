@@ -11,12 +11,11 @@ const projectsModule =  {
   },
   actions: {
     async PROJECTS_FETCH(context) {
+      console.log('\n\n\n called')
       // const response = await fetch('https://jsonplaceholder.typicode.com/posts')
       // const data = await response.json()
       const data = [{ id: 2, title: 'help' }]
-      setTimeout(() => {
-        context.mutations.PROJECTS_SET(data)
-      }, 5000)
+      context.mutations.PROJECTS_SET(data)
     }
   },
   getters: {
