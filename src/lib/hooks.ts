@@ -4,12 +4,17 @@ import { actionsContext, gettersContext, mutationsContext } from "./storeContext
 
 export const useAction = <T, >(actionName: string) => {
   const actions = useContext(actionsContext);
+  const mutations = useContext(mutationsContext);
+  const action = actions[actionName];
 
-  if (!actions[actionName]) {
+  if (!action) {
     throw new Error(`Cannot find action: ${actionName}`)
   }
 
-  return actions[actionName] as (args?: any) => Promise<T>;
+  // TODO filter object keys for modules
+  const actionWithStoreParams = (...args) => action({ actions, mutations }, ...args);
+
+  return actionWithStoreParams as (args?: any) => Promise<T>;
 }
 
 export const useActions = (values: string[]) => {

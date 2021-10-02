@@ -11,6 +11,7 @@ import React, {
 
 import { MutationsProvider, ActionsProvider, GettersProvider } from './storeContext';
 import { ActionType, GettersContextType, GetterType, MutationType, StateType, StoreType } from "./types";
+import { getStoreKeyModuleValues } from "./helpers";
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>) => (props: any) => {
   const [state, setState] = useState<InheritedStateType>(getStoreStateWithModules<InheritedStateType>(store));
@@ -30,7 +31,19 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
 
     actionNames.forEach(actionName => {
       const originalFn = actionsFns[actionName] as ActionType;
-      values[actionName] = (...args: any[]) => originalFn({ mutations, actions }, ...args);
+      const moduleNames = actionName.split('/');
+
+      if (moduleNames.length === 1) {
+        values[actionName] = originalFn;
+      } else {
+        // const moduleMutations = filterObjectModuleKeys(mutations, actionName);
+        // const moduleActions = filterObjectModuleKeys(actions, actionName);
+        // console.log(mutations)
+        // console.log(actions)
+        // console.log(moduleMutations)
+        // console.log(moduleActions)
+        values[actionName] = originalFn;
+      }
     })
 
     return values;
@@ -157,38 +170,6 @@ const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValue
   });
 }
 
-/**
- * Returns an object with keys and fn values
- * for mutations, actions and getters
- * Accounts for infinite levels of children modules
- * @param store
- * @param storeType
- * @param result
- * @param prefix
- */
-const getStoreKeyModuleValues = (store: StoreType, storeType: 'mutations' | 'actions' | 'getters', result: Record<string, Function> = {}, prefix = '') => {
-  // get the current key names with added prefix
-  if (store[storeType]) {
-    let keyNames = Object.keys(store[storeType] ?? {});
-
-    keyNames.forEach(keyName => {
-      const keyNameWithPrefix = prefix ? `${prefix}/${keyName}` : keyName;
-      Object.assign(result, { [keyNameWithPrefix]: store[storeType]?.[keyName] })
-    })
-  }
-
-  // check for child modules
-  const childModules = Object.keys(store.modules ?? {});
-  if (childModules.length) {
-    childModules.forEach(moduleName => {
-      const childPrefix = prefix ? `${prefix}/${moduleName}` : moduleName;
-      if (store.modules) getStoreKeyModuleValues(store.modules[moduleName], storeType, result, childPrefix);
-    })
-  }
-
-  return result;
-}
-
 const getStoreStateWithModules = <InheritedStateType, >(store: StoreType, result: Record<string, any> = {}): InheritedStateType => {
   Object.assign(result, store?.state);
 
@@ -218,7 +199,6 @@ function getPropByString(obj: Record<string, any>, propString: string, searchMod
 
     const candidate = searchModules ? obj.modules?.[prop] : obj[prop];
     if (candidate !== undefined) {
-      console.log('candidate ok', candidate)
       obj = candidate;
       foundPropI = i
     } else {
