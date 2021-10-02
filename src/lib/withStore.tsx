@@ -45,7 +45,18 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
 
     getterNames.forEach(getterName => {
       const originalFn = gettersFns[getterName] as GetterType;
-      const value = originalFn(store.state as StateType);
+      const moduleNames = getterName.split('/');
+      let value;
+
+      // alter the state with the logic given in the store config
+      if (moduleNames.length === 1) {
+        value = originalFn(store.state as StateType);
+      } else {
+        const moduleStore = getPropByString(store, getterName, true) as StateType;
+        value = originalFn(moduleStore.state);
+      }
+
+      // const value = originalFn(store.state as StateType);
       const context = createContext(value);
 
       result[getterName] = context;
@@ -110,8 +121,9 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
         if (moduleNames.length === 1) {
           originalFn(newState, ...args)
         } else {
-          console.log('EEEEK', getPropByString(newState, mutationName))
-          originalFn(getPropByString(newState, mutationName), ...args)
+          const moduleState = getPropByString(newState, mutationName);
+          console.log('EEEEK', moduleState)
+          originalFn(moduleState, ...args)
         }
 
         return newState
@@ -193,27 +205,28 @@ const getStoreStateWithModules = <InheritedStateType, >(store: StoreType, result
   return result as InheritedStateType;
 }
 
-function getPropByString(obj: Record<string, any>, propString: string) {
+function getPropByString(obj: Record<string, any>, propString: string, searchModules = false) {
   if (!propString)
     return obj;
 
   const props = propString.split('/');
   let prop: string
-  let parentI
+  let foundPropI
 
   for (let i = 0, iLen = props.length - 1; i < iLen; i++) {
     prop = props[i];
 
-    const candidate = obj[prop];
+    const candidate = searchModules ? obj.modules?.[prop] : obj[prop];
     if (candidate !== undefined) {
+      console.log('candidate ok', candidate)
       obj = candidate;
+      foundPropI = i
     } else {
       break;
     }
-    parentI = i
   }
 
-  return obj[props[parentI]];
+  return searchModules ? obj : obj[props[foundPropI]];
 }
 
 export default withStore;

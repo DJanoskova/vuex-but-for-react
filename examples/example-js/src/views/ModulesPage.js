@@ -1,4 +1,4 @@
-import {useAction, useActionOnMount, useGetter} from 'vuex-but-for-react';
+import {useActionOnMount, useGetter} from 'vuex-but-for-react';
 
 const ModulesPage = () => {
   useActionOnMount('projects/PROJECTS_FETCH');
