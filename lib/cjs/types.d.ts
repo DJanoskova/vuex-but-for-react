@@ -4,8 +4,9 @@ export interface StoreType<T = unknown> {
     mutations?: Record<string, MutationType>;
     actions?: Record<string, ActionType>;
     getters?: Record<string, GetterType>;
+    modules?: Record<string, StoreType>;
 }
-interface ActionParamsType {
+export interface ActionParamsType {
     mutations: Record<string, MutationType>;
     actions: Record<string, ActionType>;
 }
@@ -14,4 +15,3 @@ export declare type GettersContextType = Record<string, Context<any>>;
 export declare type MutationType = (state: StateType, ...args: any) => void;
 export declare type ActionType = (context: ActionParamsType, ...args: any) => Promise<any>;
 export declare type GetterType = (state: StateType) => any;
-export {};

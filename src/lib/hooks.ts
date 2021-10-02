@@ -1,15 +1,31 @@
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 
 import { actionsContext, gettersContext, mutationsContext } from "./storeContext";
+import { filterObjectModuleKeys } from "./helpers";
 
 export const useAction = <T, >(actionName: string) => {
   const actions = useContext(actionsContext);
+  const mutations = useContext(mutationsContext);
+  const action = actions[actionName];
 
-  if (!actions[actionName]) {
+  if (!action) {
     throw new Error(`Cannot find action: ${actionName}`)
   }
 
-  return actions[actionName] as (args?: any) => Promise<T>;
+  const actionWithStoreParams = useCallback<(args?: any) => Promise<T>>((...args: any[]) => {
+    const moduleNames = actionName.split('/');
+    let filteredActions = actions;
+    let filteredMutations = mutations;
+
+    if (moduleNames.length > 1) {
+      filteredActions = filterObjectModuleKeys(actions, actionName);
+      filteredMutations = filterObjectModuleKeys(mutations, actionName);
+    }
+
+    return action({ actions: filteredActions, mutations: filteredMutations }, ...args);
+  }, [actions, mutations, actionName])
+
+  return actionWithStoreParams;
 }
 
 export const useActions = (values: string[]) => {

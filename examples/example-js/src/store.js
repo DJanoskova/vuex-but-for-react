@@ -1,3 +1,26 @@
+const projectsModule =  {
+  state: {
+    data: [{ id: 1, title: 'Dummy project' }]
+  },
+  mutations: {
+    PROJECTS_SET(state, data) {
+      state.data = data
+    }
+  },
+  actions: {
+    async PROJECTS_FETCH(context) {
+      const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+      const data = await response.json()
+      context.mutations.PROJECTS_SET(data.splice(20, 20))
+    }
+  },
+  getters: {
+    projects (state) {
+      return state.data
+    }
+  }
+}
+
 const store = {
   state: {
     demoRefreshValue: 0,
@@ -35,6 +58,9 @@ const store = {
     posts (state) {
       return state.posts
     }
+  },
+  modules: {
+    projects: projectsModule
   }
 }
 
