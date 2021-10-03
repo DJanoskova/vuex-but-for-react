@@ -2,6 +2,12 @@
 
 If you know `vuex`, you know it's as close as we get to a perfect state management library. What if we could do this in the react world?
 
+Enjoy the vuex API in your React applications with `vuex-but-for-react`, which uses only React itself under the hood. `vuex-but-for-react` was engineered with developer experience in mind, making it very easy to use. Invoke your getter or action by using a one-line hook and don't worry about unnecessary renders - **without** using `memo`.
+
+Your component will render only when its getter changes - and it doesn't care about the rest of the store!
+
+Are you on board? Read more ð
+
 ## Installation
 
 `npm install vuex-but-for-react --save`

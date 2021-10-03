@@ -47,7 +47,6 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
         value = originalFn(moduleStore.state);
       }
 
-      // const value = originalFn(store.state as StateType);
       const context = createContext(value);
 
       result[getterName] = context;
