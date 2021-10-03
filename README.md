@@ -6,7 +6,7 @@ Enjoy the vuex API in your React applications with `vuex-but-for-react`, which u
 
 Your component will render only when its getter changes - and it doesn't care about the rest of the store!
 
-Are you on board? Read more ð
+Are you on board? Read more 👇
 
 ## Installation
 
