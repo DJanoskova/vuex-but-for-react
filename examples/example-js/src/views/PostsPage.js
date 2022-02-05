@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
-import { useAction, useGetter } from 'vuex-but-for-react';
+import { useAction, useGetter, useMutation } from 'vuex-but-for-react';
 
 const PostsPage = () => {
   const handleFetch = useAction('POSTS_FETCH');
-  const posts = useGetter('posts');
+  const handleRemove = useMutation('POST_REMOVE');
+  const blog = useGetter('blog');
 
   useEffect(() => {
     handleFetch();
@@ -13,9 +14,14 @@ const PostsPage = () => {
   // useActionOnMount('POSTS_FETCH');
 
   return (
-    <ul>
-      {posts.map(post => (
-        <li key={post.id}>{post.title}</li>
+    <ul className="list-none">
+      {blog.posts.map(post => (
+        <li key={post.id} className="blog-item">
+          <button className="button-x" onClick={() => handleRemove(post.id)}>
+            x
+          </button>
+          {post.title}
+        </li>
       ))}
     </ul>
   )

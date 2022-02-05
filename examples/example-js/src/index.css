@@ -20,3 +20,16 @@ code {
 .nav a + a {
   margin-left: 10px;
 }
+
+.list-none {
+  list-style-type: none;
+  padding: 0;
+}
+
+.blog-item {
+  margin-bottom: 1px;
+}
+
+.button-x {
+  margin-right: 10px;
+}

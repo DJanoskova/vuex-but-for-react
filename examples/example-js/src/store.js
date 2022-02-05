@@ -25,11 +25,18 @@ const store = {
   state: {
     demoRefreshValue: 0,
     counter: 0,
-    posts: []
+    // use nested structure to showcase deep reactivity
+    blog: {
+      name: 'My Blog!',
+      posts: []
+    }
   },
   mutations: {
     POSTS_SET(state, data) {
-      state.posts = data
+      state.blog.posts = data
+    },
+    POST_REMOVE(state, id) {
+      state.blog.posts = state.blog.posts.filter(p => p.id !== id)
     },
     COUNTER_INCREMENT(state) {
       state.counter++
@@ -55,8 +62,8 @@ const store = {
     counter (state) {
       return state.counter
     },
-    posts (state) {
-      return state.posts
+    blog (state) {
+      return state.blog
     }
   },
   modules: {
