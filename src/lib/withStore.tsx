@@ -103,7 +103,7 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
     const originalFn = mutations[mutationName] as MutationType;
     values[mutationName] = (...args) => {
       setState(prevState => {
-        const newState: T = { ...prevState }
+        const newState: T = JSON.parse(JSON.stringify(prevState));
         const moduleNames = mutationName.split('/');
 
         // alter the state with the logic given in the store config
@@ -150,11 +150,15 @@ const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValue
 
       if (typeof prevValues[getterPath] === 'undefined') {
         prevValues[getterPath] = value;
-      } else if (prevValues[getterPath] !== value) {
-        return {
-          ...prevValues,
-          [getterPath]: value
-        };
+      } else {
+        let oldValue = prevValues[getterPath];
+        const isEqual = oldValue === value || JSON.stringify(oldValue) === JSON.stringify(value);
+        if (!isEqual) {
+          return {
+            ...prevValues,
+            [getterPath]: value
+          };
+        }
       }
       return prevValues;
     })
