@@ -99,3 +99,60 @@ export const getStoreStateWithModules = <InheritedStateType, >(store: StoreType,
 
   return result as InheritedStateType;
 }
+
+/**
+ * @param newObject
+ * @param prevObject
+ * @param result
+ */
+export function appendNewObjectValues(newObject: Record<string, any> = {}, prevObject: Record<string, any> = {}, result = {}) {
+  Object.keys(newObject).forEach(key => {
+    const newValue = newObject?.[key];
+    const prevValue = prevObject?.[key];
+
+    if (typeof newValue === 'object') {
+      const isEqual = JSON.stringify(newValue) === JSON.stringify(prevValue);
+      if (isEqual) {
+        result[key] = newValue
+      } else {
+        if (Array.isArray(newValue)) {
+          // modifying an existing array element because length is the same, needs deeper comparison
+          if (newValue.length === prevValue.length) {
+            result[key] = []
+
+            newValue.forEach((v, index) => {
+              if (typeof v === 'object') {
+                const oldV = prevValue[index]
+
+                if (JSON.stringify(v) === JSON.stringify(oldV)) {
+                  result[key].push(v)
+                } else {
+                  if (Array.isArray(v)) {
+                    result[key].push([...v])
+                  } else {
+                    result[key].push(appendNewObjectValues(v, oldV))
+                  }
+                }
+              } else {
+                result[key] = v;
+              }
+            })
+
+          } else {
+            // removing or adding to array
+            result[key] = [...newValue]
+          }
+        } else {
+          result[key] = {}
+          appendNewObjectValues(newValue, prevValue, result[key])
+        }
+      }
+    } else {
+      if (newValue === prevValue) {
+        result[key] = newValue
+      }
+    }
+  })
+
+  return result
+}

@@ -6,15 +6,21 @@ import React, {
   createElement,
   memo,
   Dispatch,
-  SetStateAction
+  SetStateAction, useRef
 } from 'react';
 
 import { MutationsProvider, ActionsProvider, GettersProvider } from './storeContext';
 import { ActionType, GettersContextType, GetterType, MutationType, StateType, StoreType } from './types';
-import { getStoreKeyModuleValues, getStoreModuleName, getStoreModule, getStoreStateWithModules } from './helpers';
+import {
+  getStoreKeyModuleValues,
+  getStoreModuleName,
+  getStoreModule,
+  getStoreStateWithModules, appendNewObjectValues,
+} from './helpers';
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>) => (props: any) => {
-  const [state, setState] = useState<InheritedStateType>(getStoreStateWithModules<InheritedStateType>(store));
+  const [state, setState] = useState<InheritedStateType>(() => getStoreStateWithModules<InheritedStateType>(store));
+  const stateRef = useRef<InheritedStateType>();
   const [initRender, setInitRender] = useState(false);
   const [gettersValues, setGettersValues] = useState<StateType>();
 
@@ -56,6 +62,7 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   }, []);
 
   useEffect(() => {
+    stateRef.current = JSON.parse(JSON.stringify(state))
     handleGettersValuesSet<InheritedStateType>(store, state, setGettersValues);
     setInitRender(true);
   }, [state]);
@@ -103,7 +110,8 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
     const originalFn = mutations[mutationName] as MutationType<T>;
     values[mutationName] = (...args) => {
       setState(prevState => {
-        const newState: T = JSON.parse(JSON.stringify(prevState));
+        const prevStateCloned: T = JSON.parse(JSON.stringify(prevState));
+        const newState: T = {...prevState};
         const moduleNames = mutationName.split('/');
 
         // alter the state with the logic given in the store config
@@ -115,7 +123,9 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
           originalFn(moduleState as T, ...args)
         }
 
-        return newState
+        const newValues: T = appendNewObjectValues(newState, prevStateCloned) as T
+
+        return newValues
       })
     }
   })
@@ -128,38 +138,59 @@ const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValue
   const getterNames = Object.keys(getters);
   if (!getterNames.length) return;
 
+  const clonedState = JSON.parse(JSON.stringify(state));
+
   getterNames.forEach(getterPath => {
     const moduleNames = getterPath.split('/');
     let originalFn: GetterType<T>;
-    let value;
+
+    // let value;
+    // let originalValue;
+    let clonedValue;
 
     // alter the state with the logic given in the store config
     if (moduleNames.length === 1) {
       originalFn = store.getters?.[getterPath] as GetterType<T>;
-      value = originalFn(state);
+
+      // value = originalFn(state);
+      clonedValue = originalFn(clonedState);
     } else {
       const moduleStore = getStoreModule(store, getterPath) as StateType;
-      const moduleState = getStoreModule(state, getterPath) as T;
+      // const moduleState = getStoreModule(state, getterPath) as T;
+      const clonedModuleState = getStoreModule(clonedState, getterPath) as T;
+
       const getterName = moduleNames[moduleNames.length - 1]
       originalFn = moduleStore.getters?.[getterName] as GetterType<T>;
-      value = originalFn(moduleState);
+
+      // value = originalFn(moduleState);
+      clonedValue = originalFn(clonedModuleState);
     }
 
-    setGettersValues(prevValues => {
+    setGettersValues((prevValues) => {
+      console.log('\n\n\nprev', prevValues)
+      // console.log('val', value)
       if (!prevValues) prevValues = {}
 
       if (typeof prevValues[getterPath] === 'undefined') {
-        prevValues[getterPath] = value;
+        prevValues[getterPath] = clonedValue;
       } else {
+        console.log('am here defined', getterPath)
         let oldValue = prevValues[getterPath];
-        const isEqual = oldValue === value || JSON.stringify(oldValue) === JSON.stringify(value);
+        console.log('old', oldValue)
+        console.log('new', clonedValue)
+        const isEqual = oldValue === clonedValue || JSON.stringify(oldValue) === JSON.stringify(clonedValue);
+
+        // const mergedValue = appendNewObjectValues()
+
+        console.log('is eq', isEqual)
         if (!isEqual) {
           return {
             ...prevValues,
-            [getterPath]: value
+            [getterPath]: clonedValue
           };
         }
       }
+
       return prevValues;
     })
   });
