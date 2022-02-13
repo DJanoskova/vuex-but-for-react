@@ -130,16 +130,16 @@ const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValue
 
   getterNames.forEach(getterPath => {
     const moduleNames = getterPath.split('/');
-    let originalFn;
+    let originalFn: GetterType<T>;
     let value;
 
     // alter the state with the logic given in the store config
     if (moduleNames.length === 1) {
       originalFn = store.getters?.[getterPath] as GetterType<T>;
-      value = originalFn(state as StateType);
+      value = originalFn(state);
     } else {
       const moduleStore = getStoreModule(store, getterPath) as StateType;
-      const moduleState = getStoreModule(state, getterPath) as StateType;
+      const moduleState = getStoreModule(state, getterPath) as T;
       const getterName = moduleNames[moduleNames.length - 1]
       originalFn = moduleStore.getters?.[getterName] as GetterType<T>;
       value = originalFn(moduleState);
