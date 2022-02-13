@@ -100,7 +100,7 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
   const values: Record<string, (args: any) => void> = {};
 
   mutationNames.forEach(mutationName => {
-    const originalFn = mutations[mutationName] as MutationType;
+    const originalFn = mutations[mutationName] as MutationType<T>;
     values[mutationName] = (...args) => {
       setState(prevState => {
         const newState: T = JSON.parse(JSON.stringify(prevState));
@@ -112,7 +112,7 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
         } else {
           const moduleName = getStoreModuleName(mutationName);
           const moduleState = getStoreModule(newState, moduleName);
-          originalFn(moduleState, ...args)
+          originalFn(moduleState as T, ...args)
         }
 
         return newState
@@ -135,13 +135,13 @@ const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValue
 
     // alter the state with the logic given in the store config
     if (moduleNames.length === 1) {
-      originalFn = store.getters?.[getterPath] as GetterType;
+      originalFn = store.getters?.[getterPath] as GetterType<T>;
       value = originalFn(state as StateType);
     } else {
       const moduleStore = getStoreModule(store, getterPath) as StateType;
       const moduleState = getStoreModule(state, getterPath) as StateType;
       const getterName = moduleNames[moduleNames.length - 1]
-      originalFn = moduleStore.getters?.[getterName] as GetterType;
+      originalFn = moduleStore.getters?.[getterName] as GetterType<T>;
       value = originalFn(moduleState);
     }
 
