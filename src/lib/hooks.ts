@@ -12,7 +12,7 @@ export const useAction = <T, >(actionName: string) => {
     throw new Error(`Cannot find action: ${actionName}`)
   }
 
-  const actionWithStoreParams = useCallback<(args?: any) => Promise<T>>((...args: any[]) => {
+  const actionWithStoreParams = useCallback<(...args: any) => Promise<T>>((...args: any[]) => {
     const moduleNames = actionName.split('/');
     let filteredActions = actions;
     let filteredMutations = mutations;
@@ -57,7 +57,7 @@ export const useMutation = (mutationName: string) => {
 export const useMutations = (values: string[]) => {
   const mutations = useContext(mutationsContext);
 
-  const result: Array<(args?: any) => void> = [];
+  const result: Array<(...args: any) => void> = [];
 
   values.forEach((mutationName) => {
     if (!mutations[mutationName]) {
