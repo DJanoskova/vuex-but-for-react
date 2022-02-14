@@ -10,6 +10,7 @@ interface IProps {
 }
 
 const Post: FunctionComponent<IProps> = ({ post }) => {
+  console.log('post rendered', post.id)
   return (
     <div key={post.id} className="post">
       <h3>{post.title}</h3>

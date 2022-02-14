@@ -15,7 +15,7 @@ import {
   getStoreKeyModuleValues,
   getStoreModuleName,
   getStoreModule,
-  getStoreStateWithModules, appendNewObjectValues,
+  getStoreStateWithModules, appendNewObjectValues, appendNewValues,
 } from './helpers';
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>) => (props: any) => {
@@ -111,7 +111,7 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
     values[mutationName] = (...args) => {
       setState(prevState => {
         const prevStateCloned: T = JSON.parse(JSON.stringify(prevState));
-        const newState: T = {...prevState};
+        const newState: T = { ...prevState };
         const moduleNames = mutationName.split('/');
 
         // alter the state with the logic given in the store config
@@ -133,22 +133,27 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
   return values;
 }
 
-const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValues: Dispatch<SetStateAction<StateType>>) => {
+const handleGettersValuesSet = async <T, >(store: StoreType, state: T, setGettersValues: Dispatch<SetStateAction<StateType>>) => {
   const getters = getStoreKeyModuleValues(store, 'getters');
   const getterNames = Object.keys(getters);
   if (!getterNames.length) return;
+
+  let result = {};
+
+  const oldValueStringified: string = await new Promise((resolve) => {
+    setGettersValues((prevValues) => {
+      resolve(JSON.stringify(prevValues || {}));
+      return prevValues;
+    });
+  })
+
+  const prevValues = JSON.parse(oldValueStringified)
 
   getterNames.forEach(getterPath => {
     const moduleNames = getterPath.split('/');
     let originalFn: GetterType<T>;
 
     let value;
-    let oldValueStringified;
-
-    setGettersValues((prevValues) => {
-      oldValueStringified = JSON.stringify(prevValues || {});
-      return prevValues;
-    });
 
     // alter the state with the logic given in the store config
     if (moduleNames.length === 1) {
@@ -165,27 +170,33 @@ const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValue
       value = originalFn(moduleState);
     }
 
-    setGettersValues((prevValues) => {
-      if (!prevValues) prevValues = {}
+    if (typeof prevValues[getterPath] === 'undefined') {
+      result[getterPath] = value;
+    } else {
+      const oldValue = prevValues[getterPath];
+      let isEqual;
 
-      if (typeof prevValues[getterPath] === 'undefined') {
-        prevValues[getterPath] = value;
-      } else {
-        const prevValuesCloned = JSON.parse(oldValueStringified);
-        const oldValue = prevValuesCloned[getterPath];
-        const isEqual = JSON.stringify(oldValue) === JSON.stringify(value);
-
-        if (!isEqual) {
-          const newValue = appendNewObjectValues(value, oldValue);
-          return {
-            ...prevValues,
-            [getterPath]: newValue
-          };
+      if (Array.isArray(value)) {
+        if (value.length !== oldValue.length) {
+          isEqual = false;
+        } else if (JSON.stringify(oldValue) !== JSON.stringify(value)) {
+          isEqual = false;
         }
+      } else {
+        isEqual = JSON.stringify(oldValue) === JSON.stringify(value);
       }
 
-      return prevValues;
-    })
+      if (!isEqual) {
+        const newValue = appendNewValues(value, oldValue);
+        result[getterPath] = newValue
+      } else {
+        result[getterPath] = value;
+      }
+    }
+  });
+
+  setGettersValues(() => {
+    return result;
   });
 }
 
