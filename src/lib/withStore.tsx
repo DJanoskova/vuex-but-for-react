@@ -147,6 +147,12 @@ const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValue
     // let value;
     // let originalValue;
     let clonedValue;
+    let oldValueStringified;
+
+    setGettersValues((prevValues) => {
+      oldValueStringified = JSON.stringify(prevValues || {});
+      return prevValues;
+    });
 
     // alter the state with the logic given in the store config
     if (moduleNames.length === 1) {
@@ -175,18 +181,21 @@ const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValue
         prevValues[getterPath] = clonedValue;
       } else {
         console.log('am here defined', getterPath)
-        let oldValue = prevValues[getterPath];
+        const prevValuesCloned = JSON.parse(oldValueStringified);
+        const oldValue = prevValuesCloned[getterPath];
         console.log('old', oldValue)
         console.log('new', clonedValue)
-        const isEqual = oldValue === clonedValue || JSON.stringify(oldValue) === JSON.stringify(clonedValue);
+        const isEqual = JSON.stringify(oldValue) === JSON.stringify(clonedValue);
 
         // const mergedValue = appendNewObjectValues()
 
         console.log('is eq', isEqual)
         if (!isEqual) {
+          const newValue = appendNewObjectValues(clonedValue, oldValue);
+          console.log('new val', newValue)
           return {
             ...prevValues,
-            [getterPath]: clonedValue
+            [getterPath]: newValue
           };
         }
       }

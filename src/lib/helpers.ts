@@ -103,9 +103,14 @@ export const getStoreStateWithModules = <InheritedStateType, >(store: StoreType,
 /**
  * @param newObject
  * @param prevObject
- * @param result
  */
-export function appendNewObjectValues(newObject: Record<string, any> = {}, prevObject: Record<string, any> = {}, result = {}) {
+export function appendNewObjectValues(newObject: Record<string, any> = {}, prevObject: Record<string, any> = {}) {
+  if (typeof newObject !== 'object') return newObject;
+
+  // TODO for array
+
+  const result = {}
+
   Object.keys(newObject).forEach(key => {
     const newValue = newObject?.[key];
     const prevValue = prevObject?.[key];
@@ -143,14 +148,11 @@ export function appendNewObjectValues(newObject: Record<string, any> = {}, prevO
             result[key] = [...newValue]
           }
         } else {
-          result[key] = {}
-          appendNewObjectValues(newValue, prevValue, result[key])
+          result[key] = appendNewObjectValues(newValue, prevValue)
         }
       }
     } else {
-      if (newValue === prevValue) {
-        result[key] = newValue
-      }
+      result[key] = newValue
     }
   })
 

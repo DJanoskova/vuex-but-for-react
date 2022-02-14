@@ -22,6 +22,5 @@ export declare const getStoreStateWithModules: <InheritedStateType>(store: Store
 /**
  * @param newObject
  * @param prevObject
- * @param result
  */
-export declare function appendNewObjectValues(newObject?: Record<string, any>, prevObject?: Record<string, any>, result?: {}): {};
+export declare function appendNewObjectValues(newObject?: Record<string, any>, prevObject?: Record<string, any>): {};
