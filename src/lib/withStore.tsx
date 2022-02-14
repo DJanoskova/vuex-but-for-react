@@ -138,15 +138,11 @@ const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValue
   const getterNames = Object.keys(getters);
   if (!getterNames.length) return;
 
-  const clonedState = JSON.parse(JSON.stringify(state));
-
   getterNames.forEach(getterPath => {
     const moduleNames = getterPath.split('/');
     let originalFn: GetterType<T>;
 
-    // let value;
-    // let originalValue;
-    let clonedValue;
+    let value;
     let oldValueStringified;
 
     setGettersValues((prevValues) => {
@@ -158,41 +154,29 @@ const handleGettersValuesSet = <T, >(store: StoreType, state: T, setGettersValue
     if (moduleNames.length === 1) {
       originalFn = store.getters?.[getterPath] as GetterType<T>;
 
-      // value = originalFn(state);
-      clonedValue = originalFn(clonedState);
+      value = originalFn(state);
     } else {
       const moduleStore = getStoreModule(store, getterPath) as StateType;
-      // const moduleState = getStoreModule(state, getterPath) as T;
-      const clonedModuleState = getStoreModule(clonedState, getterPath) as T;
+      const moduleState = getStoreModule(state, getterPath) as T;
 
       const getterName = moduleNames[moduleNames.length - 1]
       originalFn = moduleStore.getters?.[getterName] as GetterType<T>;
 
-      // value = originalFn(moduleState);
-      clonedValue = originalFn(clonedModuleState);
+      value = originalFn(moduleState);
     }
 
     setGettersValues((prevValues) => {
-      console.log('\n\n\nprev', prevValues)
-      // console.log('val', value)
       if (!prevValues) prevValues = {}
 
       if (typeof prevValues[getterPath] === 'undefined') {
-        prevValues[getterPath] = clonedValue;
+        prevValues[getterPath] = value;
       } else {
-        console.log('am here defined', getterPath)
         const prevValuesCloned = JSON.parse(oldValueStringified);
         const oldValue = prevValuesCloned[getterPath];
-        console.log('old', oldValue)
-        console.log('new', clonedValue)
-        const isEqual = JSON.stringify(oldValue) === JSON.stringify(clonedValue);
+        const isEqual = JSON.stringify(oldValue) === JSON.stringify(value);
 
-        // const mergedValue = appendNewObjectValues()
-
-        console.log('is eq', isEqual)
         if (!isEqual) {
-          const newValue = appendNewObjectValues(clonedValue, oldValue);
-          console.log('new val', newValue)
+          const newValue = appendNewObjectValues(value, oldValue);
           return {
             ...prevValues,
             [getterPath]: newValue
