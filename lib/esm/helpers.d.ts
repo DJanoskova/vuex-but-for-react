@@ -19,8 +19,9 @@ export declare const filterObjectModuleKeys: (data: Record<string, any>, keyName
 };
 export declare function getStoreModule(obj: Record<string, any>, propString: string): Record<string, any>;
 export declare const getStoreStateWithModules: <InheritedStateType>(store: StoreType, result?: Record<string, any>) => InheritedStateType;
+export declare function appendNewValues(newValue: any, prevValue: any): any;
 /**
  * @param newObject
- * @param prevObject
+ * @param prevObject - parsed and stringified before snapshot
  */
-export declare function appendNewObjectValues(newObject?: Record<string, any>, prevObject?: Record<string, any>): {};
+export declare function appendNewObjectValues(newObject?: Record<string, any>, prevObject?: Record<string, any>): Record<string, any>;

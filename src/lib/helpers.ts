@@ -100,14 +100,38 @@ export const getStoreStateWithModules = <InheritedStateType, >(store: StoreType,
   return result as InheritedStateType;
 }
 
+export function appendNewValues(newValue, prevValue) {
+  if (typeof newValue !== 'object') return newValue;
+
+  if (Array.isArray(newValue)) {
+    let result;
+
+    if (newValue.length === prevValue.length) {
+      result = []
+
+      newValue.forEach((v, index) => {
+        const oldV = prevValue[index];
+        result.push(appendNewValues(v, oldV))
+      })
+    } else {
+      // removing or adding to array
+      result = [...newValue]
+    }
+
+    return result;
+  }
+
+  return appendNewObjectValues(newValue, prevValue);
+}
+
 /**
  * @param newObject
- * @param prevObject
+ * @param prevObject - parsed and stringified before snapshot
  */
 export function appendNewObjectValues(newObject: Record<string, any> = {}, prevObject: Record<string, any> = {}) {
   if (typeof newObject !== 'object') return newObject;
 
-  // TODO for array
+  if (JSON.stringify(newObject) === JSON.stringify(prevObject)) return newObject;
 
   const result = {}
 
@@ -115,44 +139,11 @@ export function appendNewObjectValues(newObject: Record<string, any> = {}, prevO
     const newValue = newObject?.[key];
     const prevValue = prevObject?.[key];
 
-    if (typeof newValue === 'object') {
-      const isEqual = JSON.stringify(newValue) === JSON.stringify(prevValue);
-      if (isEqual) {
-        result[key] = newValue
-      } else {
-        if (Array.isArray(newValue)) {
-          // modifying an existing array element because length is the same, needs deeper comparison
-          if (newValue.length === prevValue.length) {
-            result[key] = []
-
-            newValue.forEach((v, index) => {
-              if (typeof v === 'object') {
-                const oldV = prevValue[index]
-
-                if (JSON.stringify(v) === JSON.stringify(oldV)) {
-                  result[key].push(v)
-                } else {
-                  if (Array.isArray(v)) {
-                    result[key].push([...v])
-                  } else {
-                    result[key].push(appendNewObjectValues(v, oldV))
-                  }
-                }
-              } else {
-                result[key] = v;
-              }
-            })
-
-          } else {
-            // removing or adding to array
-            result[key] = [...newValue]
-          }
-        } else {
-          result[key] = appendNewObjectValues(newValue, prevValue)
-        }
-      }
+    const isEqual = JSON.stringify(newValue) === JSON.stringify(prevValue);
+    if (isEqual) {
+      result[key] = newValue;
     } else {
-      result[key] = newValue
+      result[key] = appendNewValues(newValue, prevValue);
     }
   })
 
