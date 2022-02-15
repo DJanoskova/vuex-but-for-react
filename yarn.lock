@@ -43,6 +43,11 @@
   "resolved" "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz"
   "version" "4.1.1"
 
+"object-deep-recreate@^1.0.0":
+  "integrity" "sha512-JVOCnVUjWoDJsPO6ZJvfXSkiQKhnzAi3vCh7FSqkwFrEG9TDCELmot38vzGBxfI1BTBzN7/gGEXAitFMPd3MVQ=="
+  "resolved" "https://registry.npmjs.org/object-deep-recreate/-/object-deep-recreate-1.0.0.tgz"
+  "version" "1.0.0"
+
 "react@^17.0.2":
   "integrity" "sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA=="
   "resolved" "https://registry.npmjs.org/react/-/react-17.0.2.tgz"

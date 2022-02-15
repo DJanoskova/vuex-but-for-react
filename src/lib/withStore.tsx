@@ -8,6 +8,7 @@ import React, {
   Dispatch,
   SetStateAction, useRef
 } from 'react';
+import { deepRecreate } from "object-deep-recreate";
 
 import { MutationsProvider, ActionsProvider, GettersProvider } from './storeContext';
 import { ActionType, GettersContextType, GetterType, MutationType, StateType, StoreType } from './types';
@@ -15,7 +16,7 @@ import {
   getStoreKeyModuleValues,
   getStoreModuleName,
   getStoreModule,
-  getStoreStateWithModules, appendNewObjectValues, appendNewValues,
+  getStoreStateWithModules
 } from './helpers';
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>) => (props: any) => {
@@ -123,7 +124,7 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
           originalFn(moduleState as T, ...args)
         }
 
-        const newValues: T = appendNewObjectValues(newState, prevStateCloned) as T
+        const newValues: T = deepRecreate(newState, prevStateCloned) as T
 
         return newValues
       })
@@ -187,7 +188,7 @@ const handleGettersValuesSet = async <T, >(store: StoreType, state: T, setGetter
       }
 
       if (!isEqual) {
-        const newValue = appendNewValues(value, oldValue);
+        const newValue = deepRecreate(value, oldValue);
         result[getterPath] = newValue
       } else {
         result[getterPath] = value;
