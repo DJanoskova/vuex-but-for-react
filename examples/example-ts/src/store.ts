@@ -11,7 +11,7 @@ const store: StoreType<{ posts: PostType[] }> = {
       state.posts = data
     },
     POST_REMOVE(state, id) {
-      state.posts = state.posts.filter((p: PostType) => p.id !== id)
+      state.posts = state.posts.filter((p) => p.id !== id)
     }
   },
   actions: {
