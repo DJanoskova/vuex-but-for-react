@@ -6,7 +6,7 @@ import React, {
   createElement,
   memo,
   Dispatch,
-  SetStateAction, useRef
+  SetStateAction
 } from 'react';
 import { deepRecreate } from "object-deep-recreate";
 
@@ -21,7 +21,6 @@ import {
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>) => (props: any) => {
   const [state, setState] = useState<InheritedStateType>(() => getStoreStateWithModules<InheritedStateType>(store));
-  const stateRef = useRef<InheritedStateType>();
   const [initRender, setInitRender] = useState(false);
   const [gettersValues, setGettersValues] = useState<StateType>();
 
@@ -63,7 +62,6 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   }, []);
 
   useEffect(() => {
-    stateRef.current = JSON.parse(JSON.stringify(state))
     handleGettersValuesSet<InheritedStateType>(store, state, setGettersValues);
     setInitRender(true);
   }, [state]);
@@ -175,24 +173,7 @@ const handleGettersValuesSet = async <T, >(store: StoreType, state: T, setGetter
       result[getterPath] = value;
     } else {
       const oldValue = prevValues[getterPath];
-      let isEqual;
-
-      if (Array.isArray(value)) {
-        if (value.length !== oldValue.length) {
-          isEqual = false;
-        } else if (JSON.stringify(oldValue) !== JSON.stringify(value)) {
-          isEqual = false;
-        }
-      } else {
-        isEqual = JSON.stringify(oldValue) === JSON.stringify(value);
-      }
-
-      if (!isEqual) {
-        const newValue = deepRecreate(value, oldValue);
-        result[getterPath] = newValue
-      } else {
-        result[getterPath] = value;
-      }
+      result[getterPath] = deepRecreate(value, oldValue);
     }
   });
 
