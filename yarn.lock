@@ -3,60 +3,60 @@
 
 
 "@types/prop-types@*":
-  "integrity" "sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ=="
-  "resolved" "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.4.tgz"
-  "version" "15.7.4"
+  version "15.7.4"
+  resolved "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.4.tgz"
+  integrity sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==
 
 "@types/react@^17.0.39":
-  "integrity" "sha512-UVavlfAxDd/AgAacMa60Azl7ygyQNRwC/DsHZmKgNvPmRR5p70AJ5Q9EAmL2NWOJmeV+vVUI4IAP7GZrN8h8Ug=="
-  "resolved" "https://registry.npmjs.org/@types/react/-/react-17.0.39.tgz"
-  "version" "17.0.39"
+  version "17.0.39"
+  resolved "https://registry.npmjs.org/@types/react/-/react-17.0.39.tgz"
+  integrity sha512-UVavlfAxDd/AgAacMa60Azl7ygyQNRwC/DsHZmKgNvPmRR5p70AJ5Q9EAmL2NWOJmeV+vVUI4IAP7GZrN8h8Ug==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
-    "csstype" "^3.0.2"
+    csstype "^3.0.2"
 
 "@types/scheduler@*":
-  "integrity" "sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew=="
-  "resolved" "https://registry.npmjs.org/@types/scheduler/-/scheduler-0.16.2.tgz"
-  "version" "0.16.2"
+  version "0.16.2"
+  resolved "https://registry.npmjs.org/@types/scheduler/-/scheduler-0.16.2.tgz"
+  integrity sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==
 
-"csstype@^3.0.2":
-  "integrity" "sha512-jXKhWqXPmlUeoQnF/EhTtTl4C9SnrxSH/jZUih3jmO6lBKr99rP3/+FmrMj4EFpOXzMtXHAZkd3x0E6h6Fgflw=="
-  "resolved" "https://registry.npmjs.org/csstype/-/csstype-3.0.8.tgz"
-  "version" "3.0.8"
+csstype@^3.0.2:
+  version "3.0.8"
+  resolved "https://registry.npmjs.org/csstype/-/csstype-3.0.8.tgz"
+  integrity sha512-jXKhWqXPmlUeoQnF/EhTtTl4C9SnrxSH/jZUih3jmO6lBKr99rP3/+FmrMj4EFpOXzMtXHAZkd3x0E6h6Fgflw==
 
 "js-tokens@^3.0.0 || ^4.0.0":
-  "integrity" "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="
-  "resolved" "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz"
-  "version" "4.0.0"
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz"
+  integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
-"loose-envify@^1.1.0":
-  "integrity" "sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q=="
-  "resolved" "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz"
-  "version" "1.4.0"
+loose-envify@^1.1.0:
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz"
+  integrity sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
   dependencies:
-    "js-tokens" "^3.0.0 || ^4.0.0"
+    js-tokens "^3.0.0 || ^4.0.0"
 
-"object-assign@^4.1.1":
-  "integrity" "sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM="
-  "resolved" "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz"
-  "version" "4.1.1"
+object-assign@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz"
+  integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
 
-"object-deep-recreate@^1.0.0":
-  "integrity" "sha512-JVOCnVUjWoDJsPO6ZJvfXSkiQKhnzAi3vCh7FSqkwFrEG9TDCELmot38vzGBxfI1BTBzN7/gGEXAitFMPd3MVQ=="
-  "resolved" "https://registry.npmjs.org/object-deep-recreate/-/object-deep-recreate-1.0.0.tgz"
-  "version" "1.0.0"
+object-deep-recreate@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/object-deep-recreate/-/object-deep-recreate-1.0.1.tgz#93f548f4dceb94cbf5fe26a9b9426d4d8a321d80"
+  integrity sha512-CS0znAjOutpuqGWCFizxFoFcqpa7FH3mxqXNa7Tn7w/7SvWjDFJX2JxB7cvI2JATEr8iCKmmLIEipM3fIE/E2w==
 
-"react@^17.0.2":
-  "integrity" "sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA=="
-  "resolved" "https://registry.npmjs.org/react/-/react-17.0.2.tgz"
-  "version" "17.0.2"
+react@^17.0.2:
+  version "17.0.2"
+  resolved "https://registry.npmjs.org/react/-/react-17.0.2.tgz"
+  integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
   dependencies:
-    "loose-envify" "^1.1.0"
-    "object-assign" "^4.1.1"
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
 
-"typescript@^4.1.2":
-  "integrity" "sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA=="
-  "resolved" "https://registry.npmjs.org/typescript/-/typescript-4.3.5.tgz"
-  "version" "4.3.5"
+typescript@^4.1.2:
+  version "4.3.5"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-4.3.5.tgz"
+  integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
