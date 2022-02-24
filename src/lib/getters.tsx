@@ -54,3 +54,19 @@ export const calcAndSetGettersValues = <T, >(
   prevStateRef.current = JSON.parse(JSON.stringify(newValues));
   setGettersValues(newValues);
 }
+
+export const getGetterInitialValue = (getterName: string, gettersFns: Record<string, Function>, store: StoreType) => {
+  const originalFn = gettersFns[getterName] as GetterType;
+  const moduleNames = getterName.split('/');
+  let value;
+
+  // alter the state with the logic given in the store config
+  if (moduleNames.length === 1) {
+    value = originalFn(store.state as StateType);
+  } else {
+    const moduleStore = getStoreModule(store, getterName) as StateType;
+    value = originalFn(moduleStore.state);
+  }
+
+  return value;
+}

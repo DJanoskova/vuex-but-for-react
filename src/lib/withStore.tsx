@@ -1,30 +1,26 @@
 import React, {
-  useMemo,
-  useState,
-  useEffect,
   createContext,
   createElement,
   memo,
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useMemo,
   useRef,
-  MutableRefObject, useCallback
+  useState
 } from 'react';
 import { deepRecreate } from "object-deep-recreate";
 
-import { MutationsProvider, ActionsProvider, GettersProvider } from './storeContext';
-import { ActionType, GettersContextType, GetterType, MutationType, StateType, StoreType } from './types';
-import {
-  getStoreKeyModuleValues,
-  getStoreModuleName,
-  getStoreModule,
-  getStoreStateWithModules
-} from './helpers';
-import { calcAndSetGettersValues } from "./getters";
+import { ActionsProvider, GettersProvider, MutationsProvider } from './storeContext';
+import { ActionType, GettersContextType, MutationType, StateType, StoreType } from './types';
+import { getStoreKeyModuleValues, getStoreModule, getStoreModuleName, getStoreStateWithModules } from './helpers';
+import { calcAndSetGettersValues, getGetterInitialValue } from "./getters";
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>) => (props: any) => {
   const [initRender, setInitRender] = useState(false);
   const [gettersValues, setGettersValues] = useState<StateType>();
 
-  const stateValues = useRef<InheritedStateType>(getStoreStateWithModules<InheritedStateType>(store));
+  const stateValues = useRef<InheritedStateType>();
   const prevGettersValues = useRef<StateType>();
 
   const handleGettersValuesSet = useCallback((newValues: InheritedStateType) => {
@@ -32,12 +28,18 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   }, []);
 
   useEffect(() => {
-    handleGettersValuesSet(stateValues?.current);
+    const stateInitialValues = getStoreStateWithModules<InheritedStateType>(store);
+    stateValues.current = stateInitialValues;
+    handleGettersValuesSet(stateInitialValues);
     setInitRender(true);
   }, []);
 
   const mutations = useMemo(() => {
-    return getMutations<InheritedStateType>(store, stateValues, handleGettersValuesSet);
+    return getMutations<InheritedStateType>(
+      store,
+      stateValues as MutableRefObject<InheritedStateType>,
+      handleGettersValuesSet
+    );
   }, []);
 
   const actions = useMemo(() => {
@@ -53,21 +55,8 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
     const result: GettersContextType = {}
 
     getterNames.forEach(getterName => {
-      const originalFn = gettersFns[getterName] as GetterType;
-      const moduleNames = getterName.split('/');
-      let value;
-
-      // alter the state with the logic given in the store config
-      if (moduleNames.length === 1) {
-        value = originalFn(store.state as StateType);
-      } else {
-        const moduleStore = getStoreModule(store, getterName) as StateType;
-        value = originalFn(moduleStore.state);
-      }
-
-      const context = createContext(value);
-
-      result[getterName] = context;
+      const value = getGetterInitialValue(getterName, gettersFns, store);
+      result[getterName] = createContext(value);
     });
 
     return result;
