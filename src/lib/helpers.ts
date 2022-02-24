@@ -85,7 +85,7 @@ export function getStoreModule(obj: Record<string, any>, propString: string) {
 }
 
 export const getStoreStateWithModules = <InheritedStateType, >(store: StoreType, result: Record<string, any> = {}): InheritedStateType => {
-  Object.assign(result, store?.state);
+  Object.assign(result, store?.state || {});
 
   const childModules = Object.keys(store.modules ?? {});
   if (childModules.length) {

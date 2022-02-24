@@ -1,34 +1,45 @@
 import React, {
-  useMemo,
-  useState,
-  useEffect,
   createContext,
   createElement,
   memo,
-  Dispatch,
-  SetStateAction,
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useMemo,
   useRef,
-  MutableRefObject
+  useState
 } from 'react';
 import { deepRecreate } from "object-deep-recreate";
 
-import { MutationsProvider, ActionsProvider, GettersProvider } from './storeContext';
-import { ActionType, GettersContextType, GetterType, MutationType, StateType, StoreType } from './types';
-import {
-  getStoreKeyModuleValues,
-  getStoreModuleName,
-  getStoreModule,
-  getStoreStateWithModules
-} from './helpers';
+import { ActionsProvider, GettersProvider, MutationsProvider } from './storeContext';
+import { ActionType, GettersContextType, MutationType, StateType, StoreType } from './types';
+import { getStoreKeyModuleValues, getStoreModule, getStoreModuleName, getStoreStateWithModules } from './helpers';
+import { calcAndSetGettersValues, getGetterInitialValue } from "./getters";
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>) => (props: any) => {
-  const [state, setState] = useState<InheritedStateType>(() => getStoreStateWithModules<InheritedStateType>(store));
   const [initRender, setInitRender] = useState(false);
   const [gettersValues, setGettersValues] = useState<StateType>();
+
+  const stateValues = useRef<InheritedStateType>();
   const prevGettersValues = useRef<StateType>();
 
+  const handleGettersValuesSet = useCallback((newValues: InheritedStateType) => {
+    calcAndSetGettersValues<InheritedStateType>(store, newValues, prevGettersValues, setGettersValues);
+  }, []);
+
+  useEffect(() => {
+    const stateInitialValues = getStoreStateWithModules<InheritedStateType>(store);
+    stateValues.current = stateInitialValues;
+    handleGettersValuesSet(stateInitialValues);
+    setInitRender(true);
+  }, []);
+
   const mutations = useMemo(() => {
-    return getMutations<InheritedStateType>(store, setState);
+    return getMutations<InheritedStateType>(
+      store,
+      stateValues as MutableRefObject<InheritedStateType>,
+      handleGettersValuesSet
+    );
   }, []);
 
   const actions = useMemo(() => {
@@ -36,7 +47,7 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
     return actionsFns ?? {};
   }, []);
 
-  const getters = useMemo(() => {
+  const getterContexts = useMemo(() => {
     const gettersFns = getStoreKeyModuleValues<Function>(store, 'getters');
     const getterNames = Object.keys(gettersFns);
     if (!getterNames.length) return {};
@@ -44,43 +55,25 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
     const result: GettersContextType = {}
 
     getterNames.forEach(getterName => {
-      const originalFn = gettersFns[getterName] as GetterType;
-      const moduleNames = getterName.split('/');
-      let value;
-
-      // alter the state with the logic given in the store config
-      if (moduleNames.length === 1) {
-        value = originalFn(store.state as StateType);
-      } else {
-        const moduleStore = getStoreModule(store, getterName) as StateType;
-        value = originalFn(moduleStore.state);
-      }
-
-      const context = createContext(value);
-
-      result[getterName] = context;
+      const value = getGetterInitialValue(getterName, gettersFns, store);
+      result[getterName] = createContext(value);
     });
 
     return result;
   }, []);
 
-  useEffect(() => {
-    handleGettersValuesSet<InheritedStateType>(store, state, setGettersValues, prevGettersValues);
-    setInitRender(true);
-  }, [state]);
-
   const MemoizedComponent = useMemo(() => memo(Component), []);
 
   // wrapping in useMemo prevents re-creation upon state change
-  const getterContexts = useMemo(() => {
-    return renderGetters(<MemoizedComponent {...props} />, getters, gettersValues);
-  }, [getters, gettersValues, MemoizedComponent, props])
+  const getterContextComponents = useMemo(() => {
+    return renderGetters(<MemoizedComponent {...props} />, getterContexts, gettersValues);
+  }, [getterContexts, gettersValues, MemoizedComponent, props])
 
   return (
     <MutationsProvider value={mutations}>
       <ActionsProvider value={actions}>
-        <GettersProvider value={getters}>
-          {initRender && getterContexts}
+        <GettersProvider value={getterContexts}>
+          {initRender && getterContextComponents}
         </GettersProvider>
       </ActionsProvider>
     </MutationsProvider>
@@ -101,7 +94,11 @@ const renderGetters = (component: JSX.Element, gettersContext: GettersContextTyp
   return result;
 }
 
-const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T>>) => {
+const getMutations = <T, >(
+  store: StoreType,
+  stateValues: MutableRefObject<T>,
+  handleValuesRefresh: (newValues: T) => void
+) => {
   const mutations = getStoreKeyModuleValues(store, 'mutations');
   const mutationNames = Object.keys(mutations);
   if (!mutationNames.length) return {};
@@ -111,70 +108,27 @@ const getMutations = <T, >(store: StoreType, setState: Dispatch<SetStateAction<T
   mutationNames.forEach(mutationName => {
     const originalFn = mutations[mutationName] as MutationType<T>;
     values[mutationName] = (...args) => {
-      setState(prevState => {
-        const prevStateCloned: T = JSON.parse(JSON.stringify(prevState));
-        const newState: T = { ...prevState };
-        const moduleNames = mutationName.split('/');
+      const state: T = stateValues?.current;
+      const prevStateCloned: T = JSON.parse(JSON.stringify(state));
+      const moduleNames = mutationName.split('/');
 
-        // alter the state with the logic given in the store config
-        if (moduleNames.length === 1) {
-          originalFn(newState, ...args)
-        } else {
-          const moduleName = getStoreModuleName(mutationName);
-          const moduleState = getStoreModule(newState, moduleName);
-          originalFn(moduleState as T, ...args)
-        }
+      // alter the state with the logic given in the store config
+      if (moduleNames.length === 1) {
+        originalFn(state, ...args)
+      } else {
+        const moduleName = getStoreModuleName(mutationName);
+        const moduleState = getStoreModule(state, moduleName);
+        originalFn(moduleState as T, ...args)
+      }
 
-        const newValues: T = deepRecreate(newState, prevStateCloned) as T
+      const newValues: T = deepRecreate(state, prevStateCloned) as T
 
-        return newValues
-      })
+      stateValues.current = newValues;
+      handleValuesRefresh(newValues);
     }
   })
 
   return values;
-}
-
-const handleGettersValuesSet = async <T, >(
-  store: StoreType,
-  state: T,
-  setGettersValues: Dispatch<SetStateAction<StateType>>,
-  prevStateRef: MutableRefObject<StateType | undefined>
-) => {
-  const getters = getStoreKeyModuleValues(store, 'getters');
-  const getterNames = Object.keys(getters);
-  if (!getterNames.length) return;
-
-  let result = {};
-  const prevValues = prevStateRef?.current || {};
-
-  getterNames.forEach(getterPath => {
-    const moduleNames = getterPath.split('/');
-    let originalFn: GetterType<T>;
-
-    let value;
-
-    // alter the state with the logic given in the store config
-    if (moduleNames.length === 1) {
-      originalFn = store.getters?.[getterPath] as GetterType<T>;
-
-      value = originalFn(state);
-    } else {
-      const moduleStore = getStoreModule(store, getterPath) as StateType;
-      const moduleState = getStoreModule(state, getterPath) as T;
-
-      const getterName = moduleNames[moduleNames.length - 1]
-      originalFn = moduleStore.getters?.[getterName] as GetterType<T>;
-
-      value = originalFn(moduleState);
-    }
-
-    result[getterPath] = value;
-  });
-
-  const newValues = deepRecreate(result, prevValues);
-  prevStateRef.current = JSON.parse(JSON.stringify(newValues));
-  setGettersValues(() => newValues);
 }
 
 export default withStore;
