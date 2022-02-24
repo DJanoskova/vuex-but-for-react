@@ -18,12 +18,12 @@ const store: StoreType<{ posts: PostType[] }> = {
     async POSTS_FETCH(context) {
       const response = await fetch('https://jsonplaceholder.typicode.com/posts')
       const data = await response.json()
-      context.mutations.POSTS_SET(data)
+      context.mutations.POSTS_SET(data.slice(0, 20));
     },
     async POST_FETCH(_, id) {
       const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`)
       const data = await response.json()
-      return data
+      return data;
     },
     async POST_DELETE(context, id) {
       await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {

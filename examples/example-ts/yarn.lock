@@ -7541,6 +7541,11 @@ object-copy@^0.1.0:
     define-property "^0.2.5"
     kind-of "^3.0.3"
 
+object-deep-recreate@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/object-deep-recreate/-/object-deep-recreate-1.0.1.tgz#93f548f4dceb94cbf5fe26a9b9426d4d8a321d80"
+  integrity sha512-CS0znAjOutpuqGWCFizxFoFcqpa7FH3mxqXNa7Tn7w/7SvWjDFJX2JxB7cvI2JATEr8iCKmmLIEipM3fIE/E2w==
+
 object-inspect@^1.11.0, object-inspect@^1.9.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.11.0.tgz#9dceb146cedd4148a0d9e51ab88d34cf509922b1"
