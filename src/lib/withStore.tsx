@@ -22,7 +22,7 @@ import {
 } from './helpers';
 import { calcAndSetGettersValues, getGetterInitialValue } from './getters';
 
-const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>, options: StoreOptionsType) => (props: any) => {
+const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>, options: StoreOptionsType = {}) => (props: any) => {
   const [initRender, setInitRender] = useState(false);
   const [gettersValues, setGettersValues] = useState<StateType>();
 
