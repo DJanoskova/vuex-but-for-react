@@ -53,6 +53,8 @@ export const calcAndSetGettersValues = <T, >(
   const newValues = deepRecreate(result, prevValues);
   prevStateRef.current = JSON.parse(JSON.stringify(newValues));
   setGettersValues(newValues);
+
+  return newValues;
 }
 
 export const getGetterInitialValue = (getterName: string, gettersFns: Record<string, Function>, store: StoreType) => {

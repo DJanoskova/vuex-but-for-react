@@ -25,3 +25,7 @@ export interface ActionType<T = unknown> {
 export interface GetterType<T = unknown> {
   (state: T): any
 }
+
+export interface StoreOptionsType {
+  localStorageName?: string; // if you wish to have synchronized state with local storage, provide the name
+}
