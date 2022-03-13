@@ -99,3 +99,13 @@ export const getStoreStateWithModules = <InheritedStateType, >(store: StoreType,
 
   return result as InheritedStateType;
 }
+
+export const handleStateFillWithLocalValues = (storageName: string, state) => {
+  const storedState = localStorage.get(storageName);
+  if (storedState) {
+    const storedStateValues: Record<string, unknown> = JSON.parse(storedState);
+    Object.keys(storedStateValues).forEach((key) => {
+      state[key] = storedStateValues[key];
+    })
+  }
+}

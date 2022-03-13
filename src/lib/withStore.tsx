@@ -9,14 +9,20 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { deepRecreate } from "object-deep-recreate";
+import { deepRecreate } from 'object-deep-recreate';
 
 import { ActionsProvider, GettersProvider, MutationsProvider } from './storeContext';
-import { ActionType, GettersContextType, MutationType, StateType, StoreType } from './types';
-import { getStoreKeyModuleValues, getStoreModule, getStoreModuleName, getStoreStateWithModules } from './helpers';
-import { calcAndSetGettersValues, getGetterInitialValue } from "./getters";
+import { ActionType, GettersContextType, MutationType, StateType, StoreOptionsType, StoreType } from './types';
+import {
+  getStoreKeyModuleValues,
+  getStoreModule,
+  getStoreModuleName,
+  getStoreStateWithModules,
+  handleStateFillWithLocalValues
+} from './helpers';
+import { calcAndSetGettersValues, getGetterInitialValue } from './getters';
 
-const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>) => (props: any) => {
+const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: StoreType<InheritedStateType>, options: StoreOptionsType) => (props: any) => {
   const [initRender, setInitRender] = useState(false);
   const [gettersValues, setGettersValues] = useState<StateType>();
 
@@ -24,12 +30,21 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   const prevGettersValues = useRef<StateType>();
 
   const handleGettersValuesSet = useCallback((newValues: InheritedStateType) => {
-    calcAndSetGettersValues<InheritedStateType>(store, newValues, prevGettersValues, setGettersValues);
+    const newState = calcAndSetGettersValues<InheritedStateType>(store, newValues, prevGettersValues, setGettersValues);
+    if (options.localStorageName) {
+      localStorage.setItem(options.localStorageName, JSON.stringify(newState))
+    }
   }, []);
 
   useEffect(() => {
     const stateInitialValues = getStoreStateWithModules<InheritedStateType>(store);
+
+    if (options.localStorageName) {
+      handleStateFillWithLocalValues(options.localStorageName, stateValues || {});
+    }
+
     stateValues.current = stateInitialValues;
+
     handleGettersValuesSet(stateInitialValues);
     setInitRender(true);
   }, []);
