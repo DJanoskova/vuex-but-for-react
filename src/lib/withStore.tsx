@@ -39,8 +39,8 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   useEffect(() => {
     const stateInitialValues = getStoreStateWithModules<InheritedStateType>(store);
 
-    if (options.localStorageName) {
-      handleStateFillWithLocalValues(options.localStorageName, stateValues || {});
+    if (options.localStorageName && stateInitialValues) {
+      handleStateFillWithLocalValues<InheritedStateType>(stateInitialValues, options.localStorageName);
     }
 
     stateValues.current = stateInitialValues;
