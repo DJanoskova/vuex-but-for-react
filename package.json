@@ -1,6 +1,6 @@
 {
   "name": "vuex-but-for-react",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "private": false,
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
@@ -19,15 +19,15 @@
     "flux"
   ],
   "dependencies": {
-    "@types/react": "^17.0.39",
-    "object-deep-recreate": "^1.0.1",
-    "typescript": "^4.1.2"
+    "object-deep-recreate": "^1.0.1"
   },
   "peerDependencies": {
-    "react": "^17.0.2"
+    "react": ">=16.8.0 <= 19"
   },
   "devDependencies": {
-    "react": "^17.0.2"
+    "@types/react": "^17.0.39",
+    "react": "^17.0.2",
+    "typescript": "^4.1.2"
   },
   "scripts": {
     "start": "react-scripts start",
