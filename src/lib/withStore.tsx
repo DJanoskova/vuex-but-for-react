@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { deepRecreate } from 'object-deep-recreate';
 
-import { ActionsProvider, MutationsProvider } from './storeContext';
+import { ActionsProvider, MutationsProvider, GlobalStoreProvider } from './storeContext';
 import {
   ActionType,
   MutationType,
@@ -16,14 +16,13 @@ import {
 import { calcAndSetGettersValues } from './getters';
 import { createStore, ExternalStoreType, StateType } from './externalStore';
 
-export let globalStore: ExternalStoreType<unknown> | undefined;
 export let globalGetters: ExternalStoreType<unknown> = createStore({});
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: VuexStoreType<InheritedStateType>, options: StoreOptionsType = {}) => (props: any) => {
-  globalStore = createStore<InheritedStateType>(store.state);
+  const globalStoreRef = useRef(createStore<InheritedStateType>(store.state));
 
   const handleGettersValuesSet = useCallback((newValues: InheritedStateType) => {
-    calcAndSetGettersValues<InheritedStateType>(store, newValues, globalGetters);
+    calcAndSetGettersValues<InheritedStateType>(store, newValues, globalGetters as ExternalStoreType<InheritedStateType>);
   }, [options.localStorageName]);
 
   useEffect(() => {
@@ -38,7 +37,7 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   }, []);
 
   const mutations = useMemo(() => {
-    return getMutations<InheritedStateType>(store, handleGettersValuesSet);
+    return getMutations<InheritedStateType>(store, globalStoreRef.current, handleGettersValuesSet);
   }, [handleGettersValuesSet]);
 
   const actions = useMemo(() => {
@@ -49,14 +48,20 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   return (
     <MutationsProvider value={mutations}>
       <ActionsProvider value={actions}>
-        <Component {...props} />
+        <GlobalStoreProvider value={globalStoreRef.current}>
+          <Component {...props} />
+        </GlobalStoreProvider>
       </ActionsProvider>
     </MutationsProvider>
   );
 }
 
-const getMutations = <T, >(store: VuexStoreType, handleGettersValuesSet: (newValues: T) => void) => {
-  const mutations = getStoreKeyModuleValues(store, 'mutations');
+const getMutations = <T, >(
+  storeConfig: VuexStoreType,
+  globalStore: ExternalStoreType<T>,
+  handleGettersValuesSet: (newValues: T) => void
+) => {
+  const mutations = getStoreKeyModuleValues(storeConfig, 'mutations');
   const mutationNames = Object.keys(mutations);
   if (!mutationNames.length) return {};
 

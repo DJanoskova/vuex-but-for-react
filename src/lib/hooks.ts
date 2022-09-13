@@ -1,11 +1,11 @@
 import { useCallback, useContext, useEffect } from "react";
 
-import { actionsContext, mutationsContext } from "./storeContext";
+import { actionsContext, globalStoreContext, mutationsContext } from "./storeContext";
 import { filterObjectModuleKeys } from "./helpers";
-import { useStore } from './externalStore';
-import { globalStore } from './withStore';
+import { ExternalStoreType, useStore } from './externalStore';
 
 export const useAction = <T, >(actionName: string) => {
+  const globalStore = useContext(globalStoreContext);
   const actions = useContext(actionsContext);
   const mutations = useContext(mutationsContext);
   const action = actions[actionName];
@@ -75,10 +75,8 @@ export const useMutations = (values: string[]) => {
 }
 
 export const useGetter = <T,>(getterName: string): T => {
-  if (!globalStore) {
-    throw new Error('No store found')
-  }
-  const value = useStore<T>(globalStore, getterName);
+  const globalStore = useContext(globalStoreContext);
+  const value = useStore<T>(globalStore as ExternalStoreType<T>, getterName);
 
   return value;
 }

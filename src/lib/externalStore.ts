@@ -1,6 +1,5 @@
 import { useCallback, useSyncExternalStore } from 'react';
 
-
 export type ExternalStoreListenerType = () => void;
 export type StateType<T = Record<string, any>> = T;
 export type SetStateType<T> = (previous: T) => T;
@@ -12,6 +11,9 @@ export type ExternalStoreType<T> = {
 };
 
 export const useStore = <T, >(store: ExternalStoreType<T>, propertyName: string): T => {
+  if (!store) {
+    throw new Error('Store not found')
+  }
   const getSnapshot = useCallback(() => store.getState()[propertyName], [store, propertyName]);
 
   return useSyncExternalStore(store.subscribe, getSnapshot);

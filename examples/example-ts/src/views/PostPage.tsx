@@ -1,22 +1,21 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAction } from "vuex-but-for-react";
 
 import { PostType } from "../types/types";
 
-interface IProps extends RouteComponentProps<{ id: string }>{}
-
-const PostPage: FunctionComponent<IProps> = ({ match }) => {
+const PostPage: FunctionComponent = () => {
+  const { id } = useParams<{ id: string }>();
   const [postData, setPostData] = useState<PostType>(null);
   const handleFetch = useAction<PostType>('POST_FETCH');
 
   useEffect(() => {
     async function fetchFn() {
-      const data = await handleFetch(match.params.id);
+      const data = await handleFetch(id);
       setPostData(data);
     }
     fetchFn();
-  }, [handleFetch, match.params.id]);
+  }, [handleFetch, id]);
 
   if (!postData) return <>Loading...</>;
 

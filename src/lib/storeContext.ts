@@ -1,6 +1,7 @@
-import { createContext, memo, Context } from 'react';
+import { createContext, memo } from 'react';
 
 import { ActionParamsType } from './types';
+import { createStore } from './externalStore';
 
 export const mutationsContext = createContext<Record<string, (...args: any) => void>>({});
 export const MutationsProvider = memo(mutationsContext.Provider);
@@ -9,5 +10,5 @@ export const actionsContext = createContext<Record<string, (context: ActionParam
 export const ActionsProvider = memo(actionsContext.Provider);
 
 // this context holds the other contexts for each getter
-export const gettersContext = createContext<Record<string, Context<any>>>({});
-export const GettersProvider = memo(gettersContext.Provider);
+export const globalStoreContext = createContext(createStore({}));
+export const GlobalStoreProvider = memo(globalStoreContext.Provider);

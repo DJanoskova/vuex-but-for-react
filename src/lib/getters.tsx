@@ -2,7 +2,6 @@ import { deepRecreate } from "object-deep-recreate";
 
 import { GetterType, VuexStoreType } from "./types";
 import { getStoreKeyModuleValues, getStoreModule } from "./helpers";
-import { globalStore } from './withStore';
 import { ExternalStoreType, StateType } from './externalStore';
 
 /**
@@ -16,11 +15,11 @@ import { ExternalStoreType, StateType } from './externalStore';
 export const calcAndSetGettersValues = <T, >(
   store: VuexStoreType,
   state: T,
-  globalGetters: ExternalStoreType,
+  globalGetters: ExternalStoreType<T>,
 ) => {
   const getters = getStoreKeyModuleValues(store, 'getters');
   const getterNames = Object.keys(getters);
-  if (!getterNames.length || !globalStore) return;
+  if (!getterNames.length) return;
 
   const setter = (prevValues) => {
     let result = {};

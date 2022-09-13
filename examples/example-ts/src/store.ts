@@ -1,8 +1,8 @@
-import { StoreType } from "vuex-but-for-react";
+import { VuexStoreType } from "vuex-but-for-react";
 
 import { PostType } from "./types/types";
 
-const store: StoreType<{ posts: PostType[] }> = {
+const store: VuexStoreType<{ posts: PostType[] }> = {
   state: {
     posts: []
   },
