@@ -1,11 +1,4 @@
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { deepRecreate } from 'object-deep-recreate';
 
 import { ActionsProvider, MutationsProvider } from './storeContext';
@@ -19,26 +12,18 @@ import {
   getStoreKeyModuleValues,
   getStoreModule,
   getStoreModuleName,
-  getStoreStateWithModules,
 } from './helpers';
 import { calcAndSetGettersValues } from './getters';
 import { createStore, ExternalStoreType, StateType } from './externalStore';
 
-export let globalStore: ExternalStoreType | undefined;
+export let globalStore: ExternalStoreType<unknown> | undefined;
+export let globalGetters: ExternalStoreType<unknown> = createStore({});
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: VuexStoreType<InheritedStateType>, options: StoreOptionsType = {}) => (props: any) => {
   globalStore = createStore<InheritedStateType>(store.state);
-  // todo getters separate store, init it here
-  const [gettersValues, setGettersValues] = useState<StateType>();
-
-  const stateValues = useRef<InheritedStateType>();
-  const prevGettersValues = useRef<StateType>();
 
   const handleGettersValuesSet = useCallback((newValues: InheritedStateType) => {
-    const newState = calcAndSetGettersValues<InheritedStateType>(store, newValues, prevGettersValues, setGettersValues);
-    // if (options.localStorageName) {
-    //   localStorage.setItem(options.localStorageName, JSON.stringify(newState))
-    // }
+    calcAndSetGettersValues<InheritedStateType>(store, newValues, globalGetters);
   }, [options.localStorageName]);
 
   useEffect(() => {
@@ -53,26 +38,24 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   }, []);
 
   const mutations = useMemo(() => {
-    return getMutations<InheritedStateType>(store);
-  }, []);
+    return getMutations<InheritedStateType>(store, handleGettersValuesSet);
+  }, [handleGettersValuesSet]);
 
   const actions = useMemo(() => {
     const actionsFns = getStoreKeyModuleValues<ActionType>(store, 'actions');
     return actionsFns ?? {};
   }, []);
 
-  const MemoizedComponent = useMemo(() => memo(Component), []);
-
   return (
     <MutationsProvider value={mutations}>
       <ActionsProvider value={actions}>
-        <MemoizedComponent />
+        <Component {...props} />
       </ActionsProvider>
     </MutationsProvider>
   );
 }
 
-const getMutations = <T, >(store: VuexStoreType) => {
+const getMutations = <T, >(store: VuexStoreType, handleGettersValuesSet: (newValues: T) => void) => {
   const mutations = getStoreKeyModuleValues(store, 'mutations');
   const mutationNames = Object.keys(mutations);
   if (!mutationNames.length) return {};
@@ -100,7 +83,8 @@ const getMutations = <T, >(store: VuexStoreType) => {
           originalFn(moduleState as T, ...args)
         }
 
-        const newValues: T = deepRecreate(previous, prevStateCloned) as T
+        const newValues: T = deepRecreate(previous, prevStateCloned) as T;
+        handleGettersValuesSet(newValues);
         return newValues;
       }
 

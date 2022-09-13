@@ -5,7 +5,7 @@ export type ExternalStoreListenerType = () => void;
 export type StateType<T = Record<string, any>> = T;
 export type SetStateType<T> = (previous: T) => T;
 
-export type ExternalStoreType<T = Record<string, any>> = {
+export type ExternalStoreType<T> = {
   getState: () => T;
   setState: (fn: SetStateType<T>) => void;
   subscribe: (listener: ExternalStoreListenerType) => () => void;
@@ -20,9 +20,12 @@ export const useStore = <T, >(store: ExternalStoreType<T>, propertyName: string)
 /**
  * https://blog.saeloun.com/2021/12/30/react-18-usesyncexternalstore-api
  */
-export const createStore = <T,>(initialState: T): ExternalStoreType => {
-  const storedState = getStoredState();
-  let state: T = { ...storedState, ...initialState };
+export const createStore = <T,>(initialState: T): ExternalStoreType<T> => {
+  // TODO work with local storage
+  // const storedState = getStoredState();
+  // let state: T = { ...storedState, ...initialState };
+
+  let state: T = initialState;
   const getState = () => state;
 
   const listeners: Set<ExternalStoreListenerType> = new Set();

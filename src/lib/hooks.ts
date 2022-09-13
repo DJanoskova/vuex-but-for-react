@@ -74,15 +74,11 @@ export const useMutations = (values: string[]) => {
   return result;
 }
 
-export const useGetter = <T, >(getterName: string): T => {
+export const useGetter = <T,>(getterName: string): T => {
   if (!globalStore) {
     throw new Error('No store found')
   }
   const value = useStore<T>(globalStore, getterName);
-
-  // if (!getters[getterName]) {
-  //   throw new Error(`Cannot find getter: ${getterName}`)
-  // }
 
   return value;
 }

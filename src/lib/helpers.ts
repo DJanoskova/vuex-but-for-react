@@ -84,7 +84,7 @@ export function getStoreModule(obj: Record<string, any>, propString: string) {
   return clonedOriginal;
 }
 
-export const getStoreStateWithModules = <InheritedStateType, >(store: StoreType, result: Record<string, any> = {}): InheritedStateType => {
+export const getStoreStateWithModules = <InheritedStateType, >(store: VuexStoreType, result: Record<string, any> = {}): InheritedStateType => {
   Object.assign(result, store?.state || {});
 
   const childModules = Object.keys(store.modules ?? {});
@@ -100,12 +100,12 @@ export const getStoreStateWithModules = <InheritedStateType, >(store: StoreType,
   return result as InheritedStateType;
 }
 
-export const handleStateFillWithLocalValues = <T = Record<string, any>,>(state: T, storageName: string) => {
-  const storedState = localStorage.getItem(storageName);
-  if (storedState) {
-    const storedStateValues: Record<string, unknown> = JSON.parse(storedState);
-    Object.keys(storedStateValues).forEach((key) => {
-      state[key] = storedStateValues[key];
-    })
-  }
-}
+// export const handleStateFillWithLocalValues = <T = Record<string, any>,>(state: T, storageName: string) => {
+//   const storedState = localStorage.getItem(storageName);
+//   if (storedState) {
+//     const storedStateValues: Record<string, unknown> = JSON.parse(storedState);
+//     Object.keys(storedStateValues).forEach((key) => {
+//       state[key] = storedStateValues[key];
+//     })
+//   }
+// }
