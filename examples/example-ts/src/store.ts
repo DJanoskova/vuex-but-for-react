@@ -36,7 +36,7 @@ const store: VuexStoreType<{ posts: PostType[] }> = {
     posts (state) {
       return state.posts
     }
-  }
+  },
 }
 
 export default store

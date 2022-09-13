@@ -1,4 +1,3 @@
-import { Context } from "react";
 import { StateType } from './externalStore';
 
 export interface VuexStoreType<T = unknown> {
@@ -14,8 +13,6 @@ export interface ActionParamsType<T = unknown> {
   actions: Record<string, ActionType<T>>;
   state: StateType<T>;
 }
-
-export type GettersContextType = Record<string, Context<any>>
 
 export interface MutationType<T = unknown> {
   (state: T, ...args: any): void;

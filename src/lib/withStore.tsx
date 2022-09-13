@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { deepRecreate } from 'object-deep-recreate';
 
 import { ActionsProvider, MutationsProvider, GlobalStoreProvider } from './storeContext';
 import {
@@ -11,7 +10,7 @@ import {
 import {
   getStoreKeyModuleValues,
   getStoreModule,
-  getStoreModuleName,
+  getStoreModuleName, getStoreStateWithModules, handleStateFillWithLocalValues,
 } from './helpers';
 import { calcAndSetGettersValues } from './getters';
 import { createStore, ExternalStoreType, StateType } from './externalStore';
@@ -26,14 +25,14 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   }, [options.localStorageName]);
 
   useEffect(() => {
-    // const stateInitialValues = getStoreStateWithModules<InheritedStateType>(store);
+    const stateInitialValues = getStoreStateWithModules<InheritedStateType>(store);
 
-    // if (options.localStorageName && stateInitialValues) {
-    //   handleStateFillWithLocalValues<InheritedStateType>(stateInitialValues, options.localStorageName);
-    // }
+    if (options.localStorageName && stateInitialValues) {
+      handleStateFillWithLocalValues<InheritedStateType>(stateInitialValues, options.localStorageName);
+    }
 
-    // stateValues.current = stateInitialValues;
-    // handleGettersValuesSet(stateInitialValues);
+    globalStoreRef.current.setState(() => stateInitialValues);
+    handleGettersValuesSet(stateInitialValues);
   }, []);
 
   const mutations = useMemo(() => {
@@ -75,8 +74,6 @@ const getMutations = <T, >(
       }
 
       const setter = (previous: StateType<T>) => {
-        const prevStateCloned: T = JSON.parse(JSON.stringify(previous));
-
         const moduleNames = mutationName.split('/');
 
         // alter the state with the logic given in the store config
@@ -88,9 +85,8 @@ const getMutations = <T, >(
           originalFn(moduleState as T, ...args)
         }
 
-        const newValues: T = deepRecreate(previous, prevStateCloned) as T;
-        handleGettersValuesSet(newValues);
-        return newValues;
+        handleGettersValuesSet(previous);
+        return previous;
       }
 
       globalStore.setState(setter);

@@ -54,7 +54,7 @@ export const calcAndSetGettersValues = <T, >(
     //   localStorage.setItem(options.localStorageName, JSON.stringify(newState))
     // }
 
-    return newValues;
+    return newValues as T;
   }
 
   globalGetters.setState(setter)
