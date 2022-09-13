@@ -1,4 +1,4 @@
-import { StoreType } from "./types";
+import { VuexStoreType } from "./types";
 
 /**
  * Returns an object with keys and fn values
@@ -9,7 +9,7 @@ import { StoreType } from "./types";
  * @param result
  * @param prefix
  */
-export const getStoreKeyModuleValues = <T, >(store: StoreType, storeType: 'mutations' | 'actions' | 'getters', result: Record<string, T> = {}, prefix = '') => {
+export const getStoreKeyModuleValues = <T, >(store: VuexStoreType, storeType: 'mutations' | 'actions' | 'getters', result: Record<string, T> = {}, prefix = '') => {
   // get the current key names with added prefix
   if (store[storeType]) {
     let keyNames = Object.keys(store[storeType] ?? {});

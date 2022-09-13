@@ -16,6 +16,14 @@ Are you on board? Read more 👇
 
 TS support included ✨
 
+---
+
+🚨 React versions
+
+**`vuex-but-for-react` >= `3.0.0` works with React `18.0.0`+**
+
+To use with older react versions, please install `vuex-but-for-react 2.0.6`
+
 ## Working example
 
 `store.js`

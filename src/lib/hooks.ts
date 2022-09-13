@@ -1,7 +1,9 @@
 import { useCallback, useContext, useEffect } from "react";
 
-import { actionsContext, gettersContext, mutationsContext } from "./storeContext";
+import { actionsContext, mutationsContext } from "./storeContext";
 import { filterObjectModuleKeys } from "./helpers";
+import { useStore } from './externalStore';
+import { globalStore } from './withStore';
 
 export const useAction = <T, >(actionName: string) => {
   const actions = useContext(actionsContext);
@@ -13,6 +15,8 @@ export const useAction = <T, >(actionName: string) => {
   }
 
   const actionWithStoreParams = useCallback<(...args: any) => Promise<T>>((...args: any[]) => {
+    if (!globalStore) throw new Error('No store found');
+
     const moduleNames = actionName.split('/');
     let filteredActions = actions;
     let filteredMutations = mutations;
@@ -22,7 +26,7 @@ export const useAction = <T, >(actionName: string) => {
       filteredMutations = filterObjectModuleKeys(mutations, actionName);
     }
 
-    return action({ actions: filteredActions, mutations: filteredMutations }, ...args);
+    return action({ actions: filteredActions, mutations: filteredMutations, state: globalStore.getState() }, ...args);
   }, [actions, mutations, actionName])
 
   return actionWithStoreParams;
@@ -71,31 +75,16 @@ export const useMutations = (values: string[]) => {
 }
 
 export const useGetter = <T, >(getterName: string): T => {
-  const getters = useContext(gettersContext);
-
-  if (!getters[getterName]) {
-    throw new Error(`Cannot find getter: ${getterName}`)
+  if (!globalStore) {
+    throw new Error('No store found')
   }
+  const value = useStore<T>(globalStore, getterName);
 
-  const value = useContext<T>(getters[getterName])
+  // if (!getters[getterName]) {
+  //   throw new Error(`Cannot find getter: ${getterName}`)
+  // }
 
   return value;
-}
-
-export const useGetters = <T extends Array<any>, >(values: string[]): T => {
-  const getters = useContext(gettersContext);
-  const result: any[] = [];
-
-  values.forEach(getterName => {
-    if (!getters[getterName]) {
-      throw new Error(`Cannot find getter: ${getterName}`);
-    } else {
-      const value = useContext(getters[getterName]);
-      result.push(value)
-    }
-  })
-
-  return result as T;
 }
 
 export const useActionOnMount = <T, >(actionName: string, ...params) => {
