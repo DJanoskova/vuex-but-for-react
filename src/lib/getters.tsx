@@ -51,10 +51,7 @@ export const calcAndSetGettersValues = <T, >(
       result[getterPath] = value;
     });
 
-    console.log('\n\nresult', JSON.parse(JSON.stringify(result)))
-    console.log('compared to', JSON.parse(JSON.stringify(prevValuesRef.current)))
     const newValues = deepRecreate(result, JSON.parse(JSON.stringify(prevValuesRef.current)));
-    // prevValuesRef.current = newValues;
     return newValues;
   }
 

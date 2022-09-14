@@ -1,4 +1,5 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import { deepRecreate } from 'object-deep-recreate';
 
 import { ActionsProvider, MutationsProvider, GlobalStoreProvider, GlobalGettersProvider } from './storeContext';
 import {
@@ -14,16 +15,11 @@ import {
 } from './helpers';
 import { calcAndSetGettersValues, getGettersInitialValues } from './getters';
 import { createStore, ExternalStoreType, StateType } from './externalStore';
-import { deepRecreate } from 'object-deep-recreate';
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: VuexStoreType<InheritedStateType>, options: StoreOptionsType = {}) => (props: any) => {
   const globalStoreRef = useRef(createStore<InheritedStateType>(store.state));
   const globalGettersRef = useRef(createStore(getGettersInitialValues(store)));
   const prevGettersRef = useRef<Record<string, any>>(getGettersInitialValues(store));
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  console.log('what', globalGettersRef.current.getState())
-  console.log('but before', JSON.parse(JSON.stringify(prevGettersRef.current)))
 
   const handleGettersValuesSet = useCallback((newValues: InheritedStateType) => {
     calcAndSetGettersValues<InheritedStateType>(store, newValues, globalGettersRef.current, prevGettersRef);
@@ -37,7 +33,6 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
     }
 
     globalStoreRef.current.setState(() => stateInitialValues);
-    setIsInitialized(true);
   }, []);
 
   const mutations = useMemo(() => {
@@ -50,8 +45,6 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   }, []);
 
   const MemoizedComponent = useMemo(() => memo(Component), []);
-
-  if (!isInitialized) return null;
 
   return (
     <MutationsProvider value={mutations}>
