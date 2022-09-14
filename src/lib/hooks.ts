@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect } from "react";
 
-import { actionsContext, globalStoreContext, mutationsContext } from "./storeContext";
+import { actionsContext, globalGettersContext, globalStoreContext, mutationsContext } from "./storeContext";
 import { filterObjectModuleKeys } from "./helpers";
 import { ExternalStoreType, useStore } from './externalStore';
 
@@ -75,8 +75,8 @@ export const useMutations = (values: string[]) => {
 }
 
 export const useGetter = <T,>(getterName: string): T => {
-  const globalStore = useContext(globalStoreContext);
-  const value = useStore<T>(globalStore as ExternalStoreType<T>, getterName);
+  const gettersStore = useContext(globalGettersContext);
+  const value = useStore<T>(gettersStore.current as ExternalStoreType<T>, getterName);
 
   return value;
 }

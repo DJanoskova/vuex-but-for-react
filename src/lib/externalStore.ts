@@ -11,10 +11,9 @@ export type ExternalStoreType<T> = {
 };
 
 export const useStore = <T, >(store: ExternalStoreType<T>, propertyName: string): T => {
-  if (!store) {
-    throw new Error('Store not found')
-  }
-  const getSnapshot = useCallback(() => store.getState()[propertyName], [store, propertyName]);
+  const getSnapshot = useCallback(() => {
+    return store.getState()[propertyName];
+  }, [store, propertyName]);
 
   return useSyncExternalStore(store.subscribe, getSnapshot);
 };
@@ -23,10 +22,6 @@ export const useStore = <T, >(store: ExternalStoreType<T>, propertyName: string)
  * https://blog.saeloun.com/2021/12/30/react-18-usesyncexternalstore-api
  */
 export const createStore = <T,>(initialState: T): ExternalStoreType<T> => {
-  // TODO work with local storage
-  // const storedState = getStoredState();
-  // let state: T = { ...storedState, ...initialState };
-
   let state: T = initialState;
   const getState = () => state;
 

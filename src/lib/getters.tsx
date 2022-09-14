@@ -3,6 +3,7 @@ import { deepRecreate } from "object-deep-recreate";
 import { GetterType, VuexStoreType } from "./types";
 import { getStoreKeyModuleValues, getStoreModule } from "./helpers";
 import { ExternalStoreType, StateType } from './externalStore';
+import { MutableRefObject } from 'react';
 
 /**
  * gets the current state
@@ -11,17 +12,19 @@ import { ExternalStoreType, StateType } from './externalStore';
  * @param store
  * @param state
  * @param globalGetters
+ * @param prevValuesRef
  */
 export const calcAndSetGettersValues = <T, >(
   store: VuexStoreType,
   state: T,
   globalGetters: ExternalStoreType<Record<string, any>>,
+  prevValuesRef: MutableRefObject<Record<string, any>>,
 ) => {
   const getters = getStoreKeyModuleValues(store, 'getters');
   const getterNames = Object.keys(getters);
   if (!getterNames.length) return;
 
-  const setter = (prevValues) => {
+  const setter = () => {
     let result = {};
 
     getterNames.forEach(getterPath => {
@@ -48,25 +51,44 @@ export const calcAndSetGettersValues = <T, >(
       result[getterPath] = value;
     });
 
-    const newValues = deepRecreate(result, prevValues);
-    return newValues as T;
+    console.log('\n\nresult', JSON.parse(JSON.stringify(result)))
+    console.log('compared to', JSON.parse(JSON.stringify(prevValuesRef.current)))
+    const newValues = deepRecreate(result, JSON.parse(JSON.stringify(prevValuesRef.current)));
+    // prevValuesRef.current = newValues;
+    return newValues;
   }
 
   globalGetters.setState(setter)
 }
 
-// export const getGetterInitialValue = (getterName: string, gettersFns: Record<string, Function>, store: VuexStoreType) => {
-//   const originalFn = gettersFns[getterName] as GetterType;
-//   const moduleNames = getterName.split('/');
-//   let value;
-//
-//   // alter the state with the logic given in the store config
-//   if (moduleNames.length === 1) {
-//     value = originalFn(store.state as StateType);
-//   } else {
-//     const moduleStore = getStoreModule(store, getterName) as StateType;
-//     value = originalFn(moduleStore.state);
-//   }
-//
-//   return value;
-// }
+export const getGetterInitialValue = (getterName: string, gettersFns: Record<string, Function>, store: VuexStoreType) => {
+  const originalFn = gettersFns[getterName] as GetterType;
+  const moduleNames = getterName.split('/');
+  let value;
+
+  // alter the state with the logic given in the store config
+  if (moduleNames.length === 1) {
+    value = originalFn(store.state as StateType);
+  } else {
+    const moduleStore = getStoreModule(store, getterName) as StateType;
+    value = originalFn(moduleStore.state);
+  }
+
+  return value;
+}
+
+export const getGettersInitialValues = (store: VuexStoreType) => {
+  const gettersFns = getStoreKeyModuleValues<Function>(store, 'getters');
+  const getterNames = Object.keys(gettersFns);
+
+  const result: Record<string, any> = {};
+
+  if (!getterNames.length) return result;
+
+  getterNames.forEach(getterName => {
+    const value = getGetterInitialValue(getterName, gettersFns, store);
+    result[getterName] = value;
+  });
+
+  return result;
+}
