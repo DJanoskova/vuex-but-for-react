@@ -15,7 +15,7 @@ import { ExternalStoreType, StateType } from './externalStore';
 export const calcAndSetGettersValues = <T, >(
   store: VuexStoreType,
   state: T,
-  globalGetters: ExternalStoreType<T>,
+  globalGetters: ExternalStoreType<Record<string, any>>,
 ) => {
   const getters = getStoreKeyModuleValues(store, 'getters');
   const getterNames = Object.keys(getters);
@@ -49,11 +49,6 @@ export const calcAndSetGettersValues = <T, >(
     });
 
     const newValues = deepRecreate(result, prevValues);
-
-    // if (options.localStorageName) {
-    //   localStorage.setItem(options.localStorageName, JSON.stringify(newState))
-    // }
-
     return newValues as T;
   }
 

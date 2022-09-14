@@ -15,13 +15,13 @@ import {
 import { calcAndSetGettersValues } from './getters';
 import { createStore, ExternalStoreType, StateType } from './externalStore';
 
-export let globalGetters: ExternalStoreType<unknown> = createStore({});
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: VuexStoreType<InheritedStateType>, options: StoreOptionsType = {}) => (props: any) => {
   const globalStoreRef = useRef(createStore<InheritedStateType>(store.state));
+  const globalGettersRef = useRef(createStore({}));
 
   const handleGettersValuesSet = useCallback((newValues: InheritedStateType) => {
-    calcAndSetGettersValues<InheritedStateType>(store, newValues, globalGetters as ExternalStoreType<InheritedStateType>);
+    calcAndSetGettersValues<InheritedStateType>(store, newValues, globalGettersRef.current);
   }, [options.localStorageName]);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
   }, []);
 
   const mutations = useMemo(() => {
-    return getMutations<InheritedStateType>(store, globalStoreRef.current, handleGettersValuesSet);
+    return getMutations<InheritedStateType>(store, globalStoreRef.current, handleGettersValuesSet, options.localStorageName);
   }, [handleGettersValuesSet]);
 
   const actions = useMemo(() => {
@@ -58,7 +58,8 @@ const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element,
 const getMutations = <T, >(
   storeConfig: VuexStoreType,
   globalStore: ExternalStoreType<T>,
-  handleGettersValuesSet: (newValues: T) => void
+  handleGettersValuesSet: (newValues: T) => void,
+  storageName?: string,
 ) => {
   const mutations = getStoreKeyModuleValues(storeConfig, 'mutations');
   const mutationNames = Object.keys(mutations);
@@ -73,20 +74,23 @@ const getMutations = <T, >(
         throw new Error('No store found')
       }
 
-      const setter = (previous: StateType<T>) => {
+      const setter = (state: StateType<T>) => {
         const moduleNames = mutationName.split('/');
 
         // alter the state with the logic given in the store config
         if (moduleNames.length === 1) {
-          originalFn(previous, ...args)
+          originalFn(state, ...args)
         } else {
           const moduleName = getStoreModuleName(mutationName);
-          const moduleState = getStoreModule(previous, moduleName);
+          const moduleState = getStoreModule(state, moduleName);
           originalFn(moduleState as T, ...args)
         }
 
-        handleGettersValuesSet(previous);
-        return previous;
+        handleGettersValuesSet(state);
+        if (storageName) {
+          localStorage.setItem(storageName, JSON.stringify(state))
+        }
+        return state;
       }
 
       globalStore.setState(setter);
