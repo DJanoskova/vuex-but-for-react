@@ -25,7 +25,7 @@ export const calcAndSetGettersValues = <T, >(
   if (!getterNames.length) return;
 
   const setter = (values) => {
-    const prevValues = JSON.parse(JSON.stringify(prevValuesRef.current));
+    const prevValues = prevValuesRef.current;
 
     getterNames.forEach(getterPath => {
       const moduleNames = getterPath.split('/');
@@ -55,6 +55,7 @@ export const calcAndSetGettersValues = <T, >(
       }
     });
 
+    prevValuesRef.current = JSON.parse(JSON.stringify(values));
     return values;
   }
 

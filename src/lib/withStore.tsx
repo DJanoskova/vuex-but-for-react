@@ -17,10 +17,10 @@ import { calcAndSetGettersValues, getGettersInitialValues } from './getters';
 import { createStore, ExternalStoreType, StateType } from './externalStore';
 
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: VuexStoreType<InheritedStateType>, options: StoreOptionsType = {}) => (props: any) => {
-  const initialValues = getGettersInitialValues(store);
+  const initialValues = useRef(getGettersInitialValues(store));
   const globalStoreRef = useRef(createStore<InheritedStateType>(store.state));
-  const globalGettersRef = useRef(createStore(initialValues));
-  const prevGettersRef = useRef<Record<string, any>>(JSON.parse(JSON.stringify(initialValues)));
+  const globalGettersRef = useRef(createStore(initialValues.current));
+  const prevGettersRef = useRef<Record<string, any>>(JSON.parse(JSON.stringify(initialValues.current)));
 
   const handleGettersValuesSet = useCallback((newValues: InheritedStateType) => {
     calcAndSetGettersValues<InheritedStateType>(store, newValues, globalGettersRef.current, prevGettersRef);
