@@ -1,6 +1,6 @@
 {
   "name": "vuex-but-for-react",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
@@ -22,7 +22,6 @@
     "react": ">=18"
   },
   "devDependencies": {
-    "object-deep-recreate": "^1.0.1",
     "react": "^18.2.0",
     "typescript": "^4.1.2"
   },
@@ -52,5 +51,8 @@
   },
   "files": [
     "/lib"
-  ]
+  ],
+  "dependencies": {
+    "object-deep-recreate": "^1.0.1"
+  }
 }

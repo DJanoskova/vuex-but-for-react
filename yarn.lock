@@ -3,30 +3,30 @@
 
 
 "js-tokens@^3.0.0 || ^4.0.0":
-  "integrity" "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="
-  "resolved" "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz"
-  "version" "4.0.0"
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz"
+  integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
-"loose-envify@^1.1.0":
-  "integrity" "sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q=="
-  "resolved" "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz"
-  "version" "1.4.0"
+loose-envify@^1.1.0:
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz"
+  integrity sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
   dependencies:
-    "js-tokens" "^3.0.0 || ^4.0.0"
+    js-tokens "^3.0.0 || ^4.0.0"
 
-"object-deep-recreate@^1.0.1":
-  "integrity" "sha512-CS0znAjOutpuqGWCFizxFoFcqpa7FH3mxqXNa7Tn7w/7SvWjDFJX2JxB7cvI2JATEr8iCKmmLIEipM3fIE/E2w=="
-  "resolved" "https://registry.npmjs.org/object-deep-recreate/-/object-deep-recreate-1.0.1.tgz"
-  "version" "1.0.1"
+object-deep-recreate@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/object-deep-recreate/-/object-deep-recreate-1.0.1.tgz#93f548f4dceb94cbf5fe26a9b9426d4d8a321d80"
+  integrity sha512-CS0znAjOutpuqGWCFizxFoFcqpa7FH3mxqXNa7Tn7w/7SvWjDFJX2JxB7cvI2JATEr8iCKmmLIEipM3fIE/E2w==
 
-"react@^18.2.0":
-  "integrity" "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ=="
-  "resolved" "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
-  "version" "18.2.0"
+react@^18.2.0:
+  version "18.2.0"
+  resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
+  integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
   dependencies:
-    "loose-envify" "^1.1.0"
+    loose-envify "^1.1.0"
 
-"typescript@^4.1.2":
-  "integrity" "sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA=="
-  "resolved" "https://registry.npmjs.org/typescript/-/typescript-4.3.5.tgz"
-  "version" "4.3.5"
+typescript@^4.1.2:
+  version "4.3.5"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-4.3.5.tgz"
+  integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
