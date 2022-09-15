@@ -66,9 +66,6 @@ const store = {
     blog (state) {
       return state.blog
     },
-    test (state) {
-      return state.test
-    }
   },
   modules: {
     projects: projectsModule

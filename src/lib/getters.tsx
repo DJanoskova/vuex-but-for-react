@@ -3,7 +3,6 @@ import { deepRecreate } from "object-deep-recreate";
 import { GetterType, VuexStoreType } from "./types";
 import { getStoreKeyModuleValues, getStoreModule } from "./helpers";
 import { ExternalStoreType, StateType } from './externalStore';
-import { MutableRefObject } from 'react';
 
 /**
  * gets the current state
@@ -22,8 +21,8 @@ export const calcAndSetGettersValues = <T, >(
   const getterNames = Object.keys(getters);
   if (!getterNames.length) return;
 
-  const setter = (prevValues) => {
-    const storedPrev = JSON.parse(JSON.stringify(prevValues));
+  const setter = (values) => {
+    const prevValues = JSON.parse(JSON.stringify(values));
     getterNames.forEach(getterPath => {
       const moduleNames = getterPath.split('/');
       let originalFn: GetterType<T>;
@@ -39,16 +38,16 @@ export const calcAndSetGettersValues = <T, >(
         const moduleStore = getStoreModule(store, getterPath) as StateType;
         const moduleState = getStoreModule(state, getterPath) as T;
 
-        const getterName = moduleNames[moduleNames.length - 1]
+        const getterName = moduleNames[moduleNames.length - 1];
         originalFn = moduleStore.getters?.[getterName] as GetterType<T>;
 
         value = originalFn(moduleState);
       }
 
-      prevValues[getterPath] = value;
+      values[getterPath] = value;
     });
 
-    const newValues = deepRecreate(prevValues, storedPrev);
+    const newValues = deepRecreate(values, prevValues);
     return newValues;
   }
 
