@@ -12,21 +12,18 @@ import { MutableRefObject } from 'react';
  * @param store
  * @param state
  * @param globalGetters
- * @param prevValuesRef
  */
 export const calcAndSetGettersValues = <T, >(
   store: VuexStoreType,
   state: T,
   globalGetters: ExternalStoreType<Record<string, any>>,
-  prevValuesRef: MutableRefObject<Record<string, any>>,
 ) => {
   const getters = getStoreKeyModuleValues(store, 'getters');
   const getterNames = Object.keys(getters);
   if (!getterNames.length) return;
 
-  const setter = () => {
-    let result = {};
-
+  const setter = (prevValues) => {
+    const storedPrev = JSON.parse(JSON.stringify(prevValues));
     getterNames.forEach(getterPath => {
       const moduleNames = getterPath.split('/');
       let originalFn: GetterType<T>;
@@ -48,10 +45,10 @@ export const calcAndSetGettersValues = <T, >(
         value = originalFn(moduleState);
       }
 
-      result[getterPath] = value;
+      prevValues[getterPath] = value;
     });
 
-    const newValues = deepRecreate(result, JSON.parse(JSON.stringify(prevValuesRef.current)));
+    const newValues = deepRecreate(prevValues, storedPrev);
     return newValues;
   }
 

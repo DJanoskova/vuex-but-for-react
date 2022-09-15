@@ -5,11 +5,19 @@ const PostsPage = () => {
   const handleFetch = useAction('POSTS_FETCH');
   const handleRemove = useMutation('POST_REMOVE');
   const blog = useGetter('blog');
-  console.log('blog', blog)
+  const test = useGetter('test');
 
   useEffect(() => {
     handleFetch();
   }, [handleFetch])
+
+  useEffect(() => {
+    console.log('blog changed', blog)
+  }, [blog])
+
+  useEffect(() => {
+    console.log('test changed', test)
+  }, [test])
 
   // You can use useActionOnMount() instead of useAction and useEffect!
   // useActionOnMount('POSTS_FETCH');

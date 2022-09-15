@@ -19,10 +19,9 @@ import { createStore, ExternalStoreType, StateType } from './externalStore';
 const withStore = <InheritedStateType, >(Component: (props: any) => JSX.Element, store: VuexStoreType<InheritedStateType>, options: StoreOptionsType = {}) => (props: any) => {
   const globalStoreRef = useRef(createStore<InheritedStateType>(store.state));
   const globalGettersRef = useRef(createStore(getGettersInitialValues(store)));
-  const prevGettersRef = useRef<Record<string, any>>(getGettersInitialValues(store));
 
   const handleGettersValuesSet = useCallback((newValues: InheritedStateType) => {
-    calcAndSetGettersValues<InheritedStateType>(store, newValues, globalGettersRef.current, prevGettersRef);
+    calcAndSetGettersValues<InheritedStateType>(store, newValues, globalGettersRef.current);
   }, [options.localStorageName]);
 
   useEffect(() => {

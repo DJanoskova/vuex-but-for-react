@@ -29,7 +29,8 @@ const store = {
     blog: {
       name: 'My Blog!',
       posts: []
-    }
+    },
+    test: [],
   },
   mutations: {
     POSTS_SET(state, data) {
@@ -64,6 +65,9 @@ const store = {
     },
     blog (state) {
       return state.blog
+    },
+    test (state) {
+      return state.test
     }
   },
   modules: {
