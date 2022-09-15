@@ -30,7 +30,6 @@ const store = {
       name: 'My Blog!',
       posts: []
     },
-    test: [{ id: 1, name: 'one' }],
   },
   mutations: {
     POSTS_SET(state, data) {
