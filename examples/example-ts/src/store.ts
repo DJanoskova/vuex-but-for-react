@@ -1,16 +1,18 @@
-import { StoreType } from "vuex-but-for-react";
+import { VuexStoreType } from "vuex-but-for-react";
 
 import { PostType } from "./types/types";
 
-const store: StoreType<{ posts: PostType[] }> = {
+export interface StoreType { posts: PostType[] }
+
+const store: VuexStoreType<StoreType> = {
   state: {
     posts: []
   },
   mutations: {
-    POSTS_SET(state, data) {
+    POSTS_SET(state, data: PostType[]) {
       state.posts = data
     },
-    POST_REMOVE(state, id) {
+    POST_REMOVE(state, id: number) {
       state.posts = state.posts.filter((p) => p.id !== id)
     }
   },
@@ -36,7 +38,7 @@ const store: StoreType<{ posts: PostType[] }> = {
     posts (state) {
       return state.posts
     }
-  }
+  },
 }
 
 export default store

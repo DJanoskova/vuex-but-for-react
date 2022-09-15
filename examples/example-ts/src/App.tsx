@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import PostsPage from "./views/PostsPage";
 import PostPage from "./views/PostPage";
@@ -7,17 +7,18 @@ import PostPage from "./views/PostPage";
 function App() {
   return (
     <div className="app">
-      <HashRouter>
-        <Switch>
+      <BrowserRouter>
+        <Routes>
           <Route
             path="/"
-            component={PostsPage}
-            exact />
+            element={<PostsPage />}
+          />
           <Route
             path="/posts/:id"
-            component={PostPage} />
-        </Switch>
-      </HashRouter>
+            element={<PostPage />}
+          />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }

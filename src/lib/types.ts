@@ -1,20 +1,18 @@
-import { Context } from "react";
+import { StateType } from './externalStore';
 
-export interface StoreType<T = unknown> {
+export interface VuexStoreType<T = unknown> {
   state: T;
   mutations?: Record<string, MutationType<T>>;
   actions?: Record<string, ActionType<T>>;
   getters?: Record<string, GetterType<T>>;
-  modules?: Record<string, StoreType>;
+  modules?: Record<string, VuexStoreType>;
 }
 
 export interface ActionParamsType<T = unknown> {
   mutations: Record<string, MutationType<T>>;
   actions: Record<string, ActionType<T>>;
+  state: StateType<T>;
 }
-
-export type StateType = Record<string, any>;
-export type GettersContextType = Record<string, Context<any>>
 
 export interface MutationType<T = unknown> {
   (state: T, ...args: any): void;

@@ -1,4 +1,4 @@
-import { HashRouter, Switch, Route, Redirect, Link } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 
 import DemoPage from './views/DemoPage';
 import PostsPage from './views/PostsPage';
@@ -14,19 +14,18 @@ function App() {
           <Link to="/modules">Modules</Link>
         </div>
 
-        <Switch>
+        <Routes>
           <Route
-            path="/demo"
-            component={DemoPage}
-            exact />
+            path="demo"
+            element={<DemoPage />} />
           <Route
-            path="/posts"
-            component={PostsPage} />
+            path="posts"
+            element={<PostsPage />} />
           <Route
-            path="/modules"
-            component={ModulesPage} />
-          <Redirect from="/" to="/demo" exact />
-        </Switch>
+            path="modules"
+            element={<ModulesPage />} />
+          {/*<Route path="*" element={<Navigate to="/demo" replace />}/>*/}
+        </Routes>
       </HashRouter>
     </div>
   );

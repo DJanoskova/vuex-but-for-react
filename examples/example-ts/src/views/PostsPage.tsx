@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useAction, useGetter } from "vuex-but-for-react";
 
-import { PostType } from "../types/types";
+import { PostType } from '../types/types';
 
 import Post from "../components/Post";
 
