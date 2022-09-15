@@ -5,6 +5,7 @@ const PostsPage = () => {
   const handleFetch = useAction('POSTS_FETCH');
   const handleRemove = useMutation('POST_REMOVE');
   const blog = useGetter('blog');
+  const test = useGetter('test');
 
   useEffect(() => {
     handleFetch();

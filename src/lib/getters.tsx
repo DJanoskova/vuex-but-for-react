@@ -1,3 +1,4 @@
+import { MutableRefObject } from 'react';
 import { deepRecreate } from "object-deep-recreate";
 
 import { GetterType, VuexStoreType } from "./types";
@@ -11,18 +12,21 @@ import { ExternalStoreType, StateType } from './externalStore';
  * @param store
  * @param state
  * @param globalGetters
+ * @param prevValuesRef
  */
 export const calcAndSetGettersValues = <T, >(
   store: VuexStoreType,
   state: T,
   globalGetters: ExternalStoreType<Record<string, any>>,
+  prevValuesRef: MutableRefObject<Record<string, any>>,
 ) => {
   const getters = getStoreKeyModuleValues(store, 'getters');
   const getterNames = Object.keys(getters);
   if (!getterNames.length) return;
 
   const setter = (values) => {
-    const prevValues = JSON.parse(JSON.stringify(values));
+    const prevValues = JSON.parse(JSON.stringify(prevValuesRef.current));
+
     getterNames.forEach(getterPath => {
       const moduleNames = getterPath.split('/');
       let originalFn: GetterType<T>;
@@ -44,11 +48,14 @@ export const calcAndSetGettersValues = <T, >(
         value = originalFn(moduleState);
       }
 
-      values[getterPath] = value;
+      const prevValueStringified = JSON.stringify(prevValues[getterPath]);
+      const isChanged = JSON.stringify(value) !== prevValueStringified;
+      if (isChanged) {
+        values[getterPath] = deepRecreate(value, JSON.parse(prevValueStringified));
+      }
     });
 
-    const newValues = deepRecreate(values, prevValues);
-    return newValues;
+    return values;
   }
 
   globalGetters.setState(setter)
